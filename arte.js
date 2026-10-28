@@ -1,4 +1,4 @@
-// Arte pixel de Misión Copechi: paleta de 16 colores, sprites como matrices y fondos de 72x40.
+// Arte pixel de Misión Copechi: paleta de 16 colores, sprites como matrices y tiles de mapa.
 // Los sprites simétricos se guardan como MITAD izquierda y se espejan al dibujar.
 (() => {
   const PALETA = {
@@ -352,51 +352,7 @@
     capaEspejo(ctx, 16, ESTRELLA, vacia ? { Y: 'u', w: 'u' } : null);
   }
 
-  // ---------- Fondos (72x40) ----------
   function R(ctx, c, x, y, w, h) { ctx.fillStyle = PALETA[c]; ctx.fillRect(x, y, w, h); }
-  const FONDOS = {
-    patio(ctx) {
-      R(ctx, 'b', 0, 0, 72, 26);
-      R(ctx, 'Y', 56, 3, 8, 8); R(ctx, 'y', 57, 4, 6, 6);
-      R(ctx, 'w', 8, 5, 12, 3); R(ctx, 'w', 11, 3, 7, 3); R(ctx, 'w', 34, 9, 10, 3); R(ctx, 'w', 37, 7, 5, 3);
-      R(ctx, 'g', 0, 26, 72, 14);
-      R(ctx, 'G', 0, 26, 72, 1);
-      for (let x = 3; x < 72; x += 9) R(ctx, 'G', x, 31 + (x % 3) * 3, 3, 1);
-      // árbol
-      R(ctx, 'o', 8, 14, 4, 14); R(ctx, 'G', 3, 6, 14, 10); R(ctx, 'g', 5, 8, 10, 6);
-      // cancha y balón
-      R(ctx, 'y', 26, 30, 36, 8); R(ctx, 'w', 43, 30, 1, 8);
-      R(ctx, 'w', 52, 33, 5, 5); R(ctx, 'k', 53, 34, 3, 3); R(ctx, 'w', 54, 35, 1, 1);
-      // portería
-      R(ctx, 'w', 62, 22, 8, 1); R(ctx, 'w', 62, 22, 1, 10); R(ctx, 'w', 69, 22, 1, 10);
-    },
-    salon(ctx) {
-      R(ctx, 'p', 0, 0, 72, 30);
-      R(ctx, 'y', 0, 30, 72, 10); R(ctx, 'o', 0, 30, 72, 1);
-      // pizarrón
-      R(ctx, 'o', 14, 5, 44, 20); R(ctx, 'G', 16, 7, 40, 16);
-      R(ctx, 'w', 20, 11, 14, 1); R(ctx, 'w', 20, 15, 22, 1); R(ctx, 'y', 46, 18, 5, 1);
-      // ventana
-      R(ctx, 'B', 2, 6, 9, 11); R(ctx, 'b', 3, 7, 7, 9); R(ctx, 'B', 6, 7, 1, 9);
-      // pupitres
-      R(ctx, 'Y', 6, 32, 14, 3); R(ctx, 'o', 8, 35, 2, 4); R(ctx, 'o', 16, 35, 2, 4);
-      R(ctx, 'Y', 50, 32, 14, 3); R(ctx, 'o', 52, 35, 2, 4); R(ctx, 'o', 60, 35, 2, 4);
-    },
-    celular(ctx) {
-      R(ctx, 'e', 0, 0, 72, 40);
-      R(ctx, 'Y', 0, 33, 72, 7); R(ctx, 'o', 0, 33, 72, 1);
-      // teléfono a la izquierda (La Copechi va al centro y el avatar abajo)
-      R(ctx, 'k', 3, 0, 22, 31); R(ctx, 'w', 5, 2, 18, 27); R(ctx, 'B', 5, 2, 18, 4);
-      R(ctx, 'b', 6, 8, 12, 6); R(ctx, 'k', 8, 10, 8, 1); R(ctx, 'k', 8, 12, 5, 1);
-      R(ctx, 'y', 10, 16, 12, 6); R(ctx, 'k', 12, 18, 8, 1); R(ctx, 'k', 12, 20, 4, 1);
-      R(ctx, 'r', 6, 24, 12, 4); R(ctx, 'w', 8, 25, 8, 1);
-    },
-  };
-  function pintarFondo(canvas, nombre) {
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, 72, 40);
-    (FONDOS[nombre] || FONDOS.patio)(ctx);
-  }
 
   // ---------- Pantalla de inicio: título pixel, cielo en bandas, nubes, chispas y flores ----------
   const FUENTE = { // letras de 5x7
@@ -623,9 +579,9 @@
   }
 
   window.ARTE = {
-    PALETA, COP, PJ, ESTRELLA, NPCS, ICONOS_MATRIZ, FONDOS: Object.keys(FONDOS),
+    PALETA, COP, PJ, ESTRELLA, NPCS, ICONOS_MATRIZ,
     N_PIEL: PIEL.length, N_PELO: PELO.length, N_ROPA: ROPA.length,
-    tile, pintarRetrato, pintarIcono, pintarTitulo, pintarInicio, pintarNube, pintarMini, CHISPA, FLOR, FUENTE, pintarCopechi, pintarPersonaje, pintarEstrella, pintarFondo, repintarCopechis, animar,
+    tile, pintarRetrato, pintarIcono, pintarTitulo, pintarInicio, pintarNube, pintarMini, CHISPA, FLOR, FUENTE, pintarCopechi, pintarPersonaje, pintarEstrella, repintarCopechis, animar,
     get frame() { return frame; },
   };
 })();
