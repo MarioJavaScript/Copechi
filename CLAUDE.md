@@ -23,17 +23,17 @@ Videojuego web para el Hackatón Misión Copechi (entrega 28-oct-2026, 18:30). M
 
 ## Arte: pixel art sencillo
 - Paleta de máximo 16 colores, tonos cálidos. Sin degradados ni sombras difusas.
-- Sprites 16x16 o 32x32 como matrices en JS, dibujados en canvas o CSS, con `image-rendering: pixelated`. Sin imágenes externas ni internet.
+- Todo el arte vive en `arte.js` (sprites simétricos como mitad izquierda, se espejan; check.js valida sus tamaños). Sprites 16x16 o 32x32 como matrices en JS, dibujados en canvas o CSS, con `image-rendering: pixelated`. Sin imágenes externas ni internet.
 - Fuente pixel con fallback a monospace.
 
 ## Contenido
 - `data/scenes.json` es la ÚNICA fuente de textos.
-- Escena: `text`, opcional `voz` (lo que se lee en voz alta), `opciones` (máx. 2), `final: true` en las finales.
-- Opción: `text`, `icono` (emoji), `next`, `feedback`, opcional `badge`.
+- Escena: opcional `fondo` ("patio", "salon" o "celular"), `text`, opcional `voz` (lo que se lee en voz alta), `opciones` (máx. 2), `final: true` en las finales.
+- Opción: `text`, `icono` (emoji), `next`, `feedback`, opcional `badge`, opcional `triste: true` (opción menos buena: cara triste y `next` vuelve a la misma escena para reintentar).
 - Textos de 1 o 2 frases simples. La Copechi acompaña, nunca regaña. Nunca "fallaste": la opción menos buena da cara triste, un feedback que invita a reflexionar y la posibilidad de volver a intentar.
 - Escenas: (1) Juegos sin dueño (Sofi fútbol, Leo muñecos, "eso no es para ti"); (2) Frases que lastiman ("los niños no lloran", "las niñas no son fuertes"; elegir la frase respetuosa); (3) Quién puede ser qué (bombero, doctora, cocinero, piloto: "¡puede ser cualquiera!"); (4) Mensaje en línea (chat dice "las niñas no saben jugar" y un desconocido pregunta "¿dónde vives?"; salida correcta: bloquear y avisar a una persona adulta de confianza).
 - Cada escena termina recordando que se puede pedir ayuda a una persona adulta de confianza.
-- Final: estrellas (no puntajes), mensaje central y 3 preguntas para debatir en el salón.
+- Final: estrellas (no puntajes), mensaje central y 3 preguntas para debatir en el salón (campo `preguntas` de la escena final; se muestran en la pantalla "Para platicar").
 
 ## Fases
 - FASE 0: estructura del repo (CLAUDE.md, README, .gitignore, check.js, _githooks/pre-commit, .claude/settings.json, index.html, style.css, game.js, data/scenes.json, assets/, guia-docente.html) con escena de prueba.

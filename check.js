@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const errores = [];
+const FONDOS = ['patio', 'salon', 'celular'];
 const err = (m) => errores.push(m);
 let datos;
 try {
@@ -23,8 +24,10 @@ for (const id of ids) {
   const e = escenas[id];
   if (vacio(e.text)) err(`[${id}] falta "text".`);
   if (e.voz !== undefined && vacio(e.voz)) err(`[${id}] "voz" está vacía.`);
+  if (e.fondo !== undefined && !FONDOS.includes(e.fondo)) err(`[${id}] fondo desconocido: ${e.fondo}.`);
   const ops = e.opciones || [];
   if (e.final) {
+    if (!Array.isArray(e.preguntas) || e.preguntas.length !== 3 || e.preguntas.some(vacio)) err(`[${id}] la escena final necesita 3 "preguntas" de debate.`);
     if (ops.length) err(`[${id}] es final pero tiene opciones.`);
     continue;
   }
@@ -39,6 +42,26 @@ for (const id of ids) {
     else if (!escenas[o.next]) err(`${w}: "next" apunta a una escena inexistente (${o.next}).`);
   });
 }
+
+// Sprites: dimensiones de las matrices en arte.js (mitades de 16 u 8 columnas)
+global.window = { matchMedia: null };
+try {
+  require('./arte.js');
+  const A = window.ARTE;
+  const mitad = (nombre, filas, ancho, alto) => {
+    for (const y in filas) {
+      if (filas[y].length !== ancho) err(`arte.js: ${nombre} fila ${y} mide ${filas[y].length}, debe medir ${ancho}.`);
+      if (+y >= alto) err(`arte.js: ${nombre} fila ${y} fuera del sprite.`);
+    }
+  };
+  [['alasA', A.COP.alasA], ['alasB', A.COP.alasB], ['cuerpo', A.COP.cuerpo], ...Object.entries(A.COP.cara).map(([k, v]) => ['cara.' + k, v])]
+    .forEach(([n, f]) => mitad('Copechi ' + n, f, 16, 32));
+  mitad('estrella', A.ESTRELLA, 8, 16); mitad('avatar base', A.AV.base, 8, 16);
+  for (const [k, f] of Object.entries(A.AV.pelo)) mitad('pelo ' + k, f, 8, 16);
+  for (const [k, f] of Object.entries(A.AV.ropa)) mitad('ropa ' + k, f, 8, 16);
+  const usados = new Set(Object.values(A.PALETA));
+  if (usados.size > 16) err('La paleta tiene más de 16 colores.');
+} catch (e) { err('arte.js no carga: ' + e.message); }
 
 // Alcanzables desde el inicio
 const vistas = new Set();

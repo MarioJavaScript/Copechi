@@ -3,11 +3,57 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#fff1c9">
 <title>Misión Copechi</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main id="app"><p>Cargando…</p></main>
+<main id="app">
+  <section id="inicio" class="pantalla activa">
+    <h1>Misión Copechi</h1>
+    <canvas class="copechi grande" width="32" height="32" data-expr="contenta" aria-hidden="true"></canvas>
+    <button id="btn-empezar" class="btn grande">👆 ¡Toca para empezar!</button>
+  </section>
+
+  <section id="avatar" class="pantalla">
+    <h2>¡Crea tu personaje!</h2>
+    <canvas id="avatar-grande" class="avatar-grande" width="16" height="16" aria-hidden="true"></canvas>
+    <div class="selector"><button class="btn flecha" data-campo="piel" data-d="-1" aria-label="Anterior">◀</button><span class="icono-selector">🙂</span><button class="btn flecha" data-campo="piel" data-d="1" aria-label="Siguiente">▶</button></div>
+    <div class="selector"><button class="btn flecha" data-campo="pelo" data-d="-1" aria-label="Anterior">◀</button><span class="icono-selector">💇</span><button class="btn flecha" data-campo="pelo" data-d="1" aria-label="Siguiente">▶</button></div>
+    <div class="selector"><button class="btn flecha" data-campo="ropa" data-d="-1" aria-label="Anterior">◀</button><span class="icono-selector">👕</span><button class="btn flecha" data-campo="ropa" data-d="1" aria-label="Siguiente">▶</button></div>
+    <button id="btn-listo" class="btn grande">✅ ¡Listo!</button>
+  </section>
+
+  <section id="juego" class="pantalla">
+    <div class="escena">
+      <canvas id="fondo" width="72" height="40" aria-hidden="true"></canvas>
+      <canvas id="copechi" class="copechi" width="32" height="32" data-expr="neutral" aria-hidden="true"></canvas>
+      <canvas id="avatar-mini" class="avatar-mini" width="16" height="16" aria-hidden="true"></canvas>
+      <button id="btn-voz" class="btn bocina" aria-label="Escuchar otra vez">🔊</button>
+    </div>
+    <p id="texto" class="tarjeta"></p>
+    <div id="opciones" class="opciones"></div>
+  </section>
+
+  <section id="final" class="pantalla">
+    <div class="fila-final">
+      <canvas class="copechi grande" width="32" height="32" data-expr="contenta" aria-hidden="true"></canvas>
+      <canvas id="avatar-final" class="avatar-grande" width="16" height="16" aria-hidden="true"></canvas>
+    </div>
+    <div id="estrellas" class="estrellas" aria-hidden="true"></div>
+    <p id="texto-final" class="tarjeta"></p>
+    <button id="btn-voz-final" class="btn bocina" aria-label="Escuchar otra vez">🔊</button>
+    <button id="btn-debate" class="btn grande">💬 Para platicar</button>
+  </section>
+
+  <section id="debate" class="pantalla">
+    <h2>💬 Para platicar en el salón</h2>
+    <ol id="preguntas" class="preguntas"></ol>
+    <button id="btn-voz-debate" class="btn bocina" aria-label="Escuchar otra vez">🔊</button>
+    <button id="btn-reiniciar" class="btn grande">🔁 Jugar otra vez</button>
+  </section>
+</main>
+<script src="arte.js"></script>
 <script src="game.js"></script>
 </body>
 </html>

@@ -1,21 +1,155 @@
 {
-  "inicio": "prueba",
+  "inicio": "juegos",
   "escenas": {
-    "prueba": {
-      "text": "¡Hola! Soy La Copechi. Esta es una escena de prueba.",
-      "voz": "¡Hola! Soy La Copechi. Esta es una escena de prueba.",
+    "juegos": {
+      "fondo": "patio",
+      "text": "En el recreo, Sofi quiere jugar fútbol y Leo quiere cuidar muñecos. Alguien dice: «Eso no es para ti».",
+      "voz": "En el recreo, Sofi quiere jugar fútbol y Leo quiere cuidar muñecos. Alguien dice: eso no es para ti. ¿Qué hacemos?",
       "opciones": [
         {
-          "text": "¡Todas y todos podemos!",
-          "icono": "🌟",
-          "next": "fin",
-          "feedback": "¡Muy bien! Ningún juego, color ni oficio tiene dueño.",
+          "text": "Cada quien juega lo que quiere",
+          "icono": "⚽",
+          "next": "frases",
+          "feedback": "¡Muy bien! Ningún juego tiene dueño. Si alguien no te deja jugar, cuéntaselo a una persona adulta de confianza.",
+          "badge": "estrella"
+        },
+        {
+          "text": "Cambiar de juego",
+          "icono": "🚫",
+          "next": "juegos",
+          "feedback": "Mmm... Sofi y Leo se sienten tristes. Los juegos son para todas y todos. ¡Intenta otra vez!",
+          "triste": true
+        }
+      ]
+    },
+    "frases": {
+      "fondo": "salon",
+      "text": "En el salón alguien dice: «Los niños no lloran» y «Las niñas no son fuertes». ¿Qué le decimos?",
+      "voz": "En el salón alguien dice: los niños no lloran, y las niñas no son fuertes. ¿Qué le decimos?",
+      "opciones": [
+        {
+          "text": "Todas y todos podemos llorar y ser fuertes",
+          "icono": "💛",
+          "next": "oficio_bombero",
+          "feedback": "¡Qué bonito! Tus palabras cuidan. Si algo te hace sentir mal, platícalo con una persona adulta de confianza.",
+          "badge": "estrella"
+        },
+        {
+          "text": "Repetir: «Los niños no lloran»",
+          "icono": "🤐",
+          "next": "frases",
+          "feedback": "Mmm... esas palabras pueden lastimar. Sentir tristeza o fuerza es de todas y todos. ¡Intenta otra vez!",
+          "triste": true
+        }
+      ]
+    },
+    "oficio_bombero": {
+      "fondo": "salon",
+      "text": "¿Quién puede ser bombero o bombera y apagar fuegos?",
+      "voz": "¿Quién puede ser bombero o bombera y apagar fuegos?",
+      "opciones": [
+        {
+          "text": "Una niña",
+          "icono": "👧",
+          "next": "oficio_doctora",
+          "feedback": "¡Puede ser cualquiera! Una niña puede ser bombera. 🚒"
+        },
+        {
+          "text": "Un niño",
+          "icono": "👦",
+          "next": "oficio_doctora",
+          "feedback": "¡Puede ser cualquiera! Un niño puede ser bombero. 🚒"
+        }
+      ]
+    },
+    "oficio_doctora": {
+      "fondo": "salon",
+      "text": "¿Quién puede ser doctora o doctor y cuidar a las personas?",
+      "voz": "¿Quién puede ser doctora o doctor y cuidar a las personas?",
+      "opciones": [
+        {
+          "text": "Una niña",
+          "icono": "👧",
+          "next": "oficio_cocinero",
+          "feedback": "¡Puede ser cualquiera! Una niña puede ser doctora. 🩺"
+        },
+        {
+          "text": "Un niño",
+          "icono": "👦",
+          "next": "oficio_cocinero",
+          "feedback": "¡Puede ser cualquiera! Un niño puede ser doctor. 🩺"
+        }
+      ]
+    },
+    "oficio_cocinero": {
+      "fondo": "salon",
+      "text": "¿Quién puede ser cocinero o cocinera y preparar comida rica?",
+      "voz": "¿Quién puede ser cocinero o cocinera y preparar comida rica?",
+      "opciones": [
+        {
+          "text": "Una niña",
+          "icono": "👧",
+          "next": "oficio_piloto",
+          "feedback": "¡Puede ser cualquiera! Una niña puede ser cocinera. 🍳"
+        },
+        {
+          "text": "Un niño",
+          "icono": "👦",
+          "next": "oficio_piloto",
+          "feedback": "¡Puede ser cualquiera! Un niño puede ser cocinero. 🍳"
+        }
+      ]
+    },
+    "oficio_piloto": {
+      "fondo": "salon",
+      "text": "¿Quién puede ser piloto o pilota y volar un avión?",
+      "voz": "¿Quién puede ser piloto, o pilota, y volar un avión?",
+      "opciones": [
+        {
+          "text": "Una niña",
+          "icono": "👧",
+          "next": "chat",
+          "feedback": "¡Puede ser cualquiera! Ningún oficio tiene dueño. Si alguien dice que no puedes, cuéntaselo a una persona adulta de confianza. ✈️",
+          "badge": "estrella"
+        },
+        {
+          "text": "Un niño",
+          "icono": "👦",
+          "next": "chat",
+          "feedback": "¡Puede ser cualquiera! Ningún oficio tiene dueño. Si alguien dice que no puedes, cuéntaselo a una persona adulta de confianza. ✈️",
           "badge": "estrella"
         }
       ]
     },
+    "chat": {
+      "fondo": "celular",
+      "text": "En un juego en línea, alguien escribe: «Las niñas no saben jugar». Luego un desconocido pregunta: «¿Dónde vives?».",
+      "voz": "En un juego en línea, alguien escribe: las niñas no saben jugar. Luego un desconocido pregunta: ¿dónde vives? ¿Qué hacemos?",
+      "opciones": [
+        {
+          "text": "Bloquear y avisar a un adulto",
+          "icono": "🛡️",
+          "next": "fin",
+          "feedback": "¡Excelente! Bloquear y avisar a una persona adulta de confianza te cuida. Nunca digas dónde vives.",
+          "badge": "estrella"
+        },
+        {
+          "text": "Contestar dónde vivo",
+          "icono": "📍",
+          "next": "chat",
+          "feedback": "Uy... a desconocidos no les contamos dónde vivimos. Mejor bloquea y avisa a una persona adulta de confianza. ¡Intenta otra vez!",
+          "triste": true
+        }
+      ]
+    },
     "fin": {
-      "text": "¡Lo lograste! Si algo te preocupa, platícalo con una persona adulta de confianza.",
+      "text": "¡Ningún juego, color ni oficio tiene dueño! ¡Todas y todos podemos! Y si algo te preocupa, platícalo con una persona adulta de confianza.",
+      "voz": "Ningún juego, color ni oficio tiene dueño. ¡Todas y todos podemos! Y si algo te preocupa, platícalo con una persona adulta de confianza.",
+      "preguntas": [
+        "¿Hay juegos o colores solo para niñas o solo para niños? ¿Por qué?",
+        "Si alguien dice «los niños no lloran», ¿qué le podemos contestar?",
+        "Si alguien en línea te pregunta dónde vives, ¿qué haces y a qué persona adulta de confianza se lo cuentas?"
+      ],
       "final": true
     }
   }
