@@ -2,11 +2,66 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Guía docente · Misión Copechi</title>
+<style>
+  body { margin: 0; background: #fff1c9; color: #3b2210; font: 18px/1.6 ui-monospace, monospace; padding: env(safe-area-inset-top) 16px 32px; }
+  main { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 28px; color: #9a4414; margin: 24px 0 4px; }
+  h2 { font-size: 20px; color: #9a4414; margin: 32px 0 8px; }
+  .lema { font-weight: bold; margin: 0 0 16px; }
+  section { background: #fff; border: 4px solid #3b2210; padding: 4px 16px 16px; margin-top: 16px; }
+  li { margin: 6px 0; }
+  .jugar { display: inline-block; background: #ffd25e; color: #3b2210; border: 4px solid #3b2210; box-shadow: 4px 4px 0 #3b2210; padding: 16px 24px; margin-top: 16px; text-decoration: none; font-weight: bold; min-height: 64px; }
+  @media print { .jugar { display: none; } body { background: #fff; } }
+</style>
 </head>
 <body>
-<h1>Guía docente</h1>
-<p>Se completa en la Fase 4.</p>
+<main>
+  <h1>Guía docente</h1>
+  <p class="lema">Misión Copechi: ¡Todas y todos podemos!</p>
+  <p>Videojuego para niñas y niños de 4 a 10 años (kinder y primaria). Se juega en celular o tableta, con voz e íconos: no hace falta saber leer.</p>
+  <a class="jugar" href="index.html">▶ Jugar ahora</a>
+
+  <section>
+    <h2>🎯 Objetivo didáctico</h2>
+    <p>Que niñas y niños reconozcan y cuestionen estereotipos de género en juegos, colores, oficios y palabras, y sepan pedir ayuda a una persona adulta de confianza. Mensaje central: <b>«¡Ningún juego, color ni oficio tiene dueño!»</b></p>
+    <p>Retos del evento que cubre: 7 (Todas y todos tenemos un lugar), 5 (Las palabras pueden cuidar o lastimar), 4 (Mis emociones también importan) y 3 (Me cuido en el mundo digital).</p>
+  </section>
+
+  <section>
+    <h2>⏱️ Duración: 15 minutos</h2>
+    <ul>
+      <li><b>2 min:</b> presentar a La Copechi y que cada quien cree su personaje.</li>
+      <li><b>6 min:</b> jugar las escenas (juegos, frases, oficios y chat). Pueden jugar en parejas o en grupo con un proyector.</li>
+      <li><b>7 min:</b> conversar con las preguntas de debate.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>📱 Cómo usarlo</h2>
+    <ul>
+      <li>Abre el enlace o escanea el código QR en el celular o la tableta. Funciona mejor en vertical.</li>
+      <li>Toca «¡Toca para empezar!»: así se activa la voz. Sube el volumen.</li>
+      <li>La bocina 🔊 repite lo que dice La Copechi. En kinder, léanlo en voz alta con el grupo.</li>
+      <li>Si eligen una opción que lastima, La Copechi se pone triste y invita a pensar; nunca regaña y pueden intentar otra vez.</li>
+      <li>Después de la primera carga, el juego funciona sin internet.</li>
+      <li>No se guardan datos ni se pide ningún dato personal.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>💬 Preguntas para debatir</h2>
+    <ol id="preguntas"></ol>
+    <p>Recuerda a las niñas y los niños que, si algo los preocupa o los hace sentir mal, pueden contárselo a una persona adulta de confianza.</p>
+  </section>
+</main>
+<script>
+  fetch('data/scenes.json').then((r) => r.json()).then((d) => {
+    const fin = Object.values(d.escenas).find((e) => e.final);
+    const ol = document.getElementById('preguntas');
+    (fin.preguntas || []).forEach((q) => { const li = document.createElement('li'); li.textContent = q; ol.append(li); });
+  }).catch(() => {});
+</script>
 </body>
 </html>

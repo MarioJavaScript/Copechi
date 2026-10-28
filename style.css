@@ -15,8 +15,8 @@ canvas { image-rendering: pixelated; display: block; }
 #app { height: 100%; max-width: 480px; margin: 0 auto; position: relative; }
 .pantalla { display: none; height: 100%; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 16px; text-align: center; }
 .pantalla.activa { display: flex; }
-h1 { font-size: 24px; margin: 0; color: #b5541c; }
-h2 { font-size: 18px; margin: 0; color: #b5541c; }
+h1 { font-size: 24px; margin: 0; color: #9a4414; }
+h2 { font-size: 18px; margin: 0; color: #9a4414; }
 
 .btn {
   font: inherit; color: #3b2210; background: #ffd25e; border: 4px solid #3b2210; border-radius: 0;
@@ -38,10 +38,10 @@ h2 { font-size: 18px; margin: 0; color: #b5541c; }
 .copechi.grande { width: 128px; height: 128px; }
 .avatar-grande { width: 96px; height: 96px; flex: none; }
 
-.tarjeta { background: #fff; border: 4px solid #3b2210; margin: 0; padding: 12px; width: 100%; font-size: 14px; line-height: 1.6; }
+.tarjeta { background: #fff; border: 4px solid #3b2210; margin: 0; padding: 12px; width: 100%; font-size: 16px; line-height: 1.5; }
 
 .opciones { width: 100%; display: flex; flex-direction: column; gap: 48px; }
-.opcion { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 80px; text-align: left; font-size: 14px; }
+.opcion { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 80px; text-align: left; font-size: 16px; }
 .opcion .icono { font-size: 36px; flex: none; }
 
 /* Constructor de avatar */
@@ -64,5 +64,5 @@ h2 { font-size: 18px; margin: 0; color: #b5541c; }
 }
 @media (max-height: 600px) { .copechi.grande { width: 96px; height: 96px; } }
 
-.preguntas { text-align: left; margin: 0; padding: 0 0 0 28px; width: 100%; font-size: 14px; line-height: 1.6; display: flex; flex-direction: column; gap: 16px; }
+.preguntas { text-align: left; margin: 0; padding: 0 0 0 28px; width: 100%; font-size: 16px; line-height: 1.5; display: flex; flex-direction: column; gap: 16px; }
 .preguntas li { background: #fff; border: 4px solid #3b2210; padding: 8px 12px; margin-left: -8px; }

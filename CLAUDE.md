@@ -42,6 +42,9 @@ Videojuego web para el Hackatón Misión Copechi (entrega 28-oct-2026, 18:30). M
 - FASE 3: contenido de las 4 escenas en scenes.json.
 - FASE 4: pulido: guia-docente.html (objetivo, 15 min, uso, 3 preguntas), funciona offline tras cargar, contraste y letra, README con GitHub Pages y QR. Verificar en 360x640 y 768x1024.
 
+## Offline
+- `sw.js` guarda los archivos (cache-first). Al cambiar archivos, subir la versión de `CACHE` en sw.js.
+
 ## Comandos
 - `node check.js`: valida scenes.json (next inexistente, escenas sin salida, inalcanzables, sin ruta a final, falta text/feedback/next).
 - Activar el hook (lo hace Mario): `git config core.hooksPath _githooks`.
