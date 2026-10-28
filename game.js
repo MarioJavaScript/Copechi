@@ -83,7 +83,7 @@
 
   // ---- Avatar ----
   function pintarAvatares() {
-    ['avatar-grande', 'avatar-final'].forEach((id) => ARTE.pintarAvatar($(id), avatar));
+    ['avatar-grande', 'avatar-final'].forEach((id) => ARTE.pintarPersonaje($(id), avatar));
   }
   document.querySelectorAll('.flecha').forEach((b) => b.addEventListener('click', () => {
     const c = b.dataset.campo;

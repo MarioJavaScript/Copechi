@@ -1,7 +1,7 @@
 // Motor de mapas: cuadrícula de tiles 16x16, camino por BFS, NPC, salidas con fundido y progreso.
 (() => {
-  const T = 16, COLS = 11, FILAS = 14, PASO_MS = 150, FUNDIDO_MS = 300;
-  const SOLIDOS = new Set(['#', 'T', 'B']);
+  const T = 32, COLS = 11, FILAS = 14, PASO_MS = 150, FUNDIDO_MS = 300;
+  const SOLIDOS = new Set(['#', 'T', 'B', 'W', 'Z', 'S', 'D', 'C', 'L', 'M']);
   const DIRS = { arriba: [0, -1], abajo: [0, 1], izquierda: [-1, 0], derecha: [1, 0] };
   const $ = (id) => document.getElementById(id);
 
@@ -71,16 +71,14 @@
     for (const d of Object.keys(DIRS)) {
       sprites[d] = [0, 1, 2].map((p) => {
         const c = document.createElement('canvas');
-        c.width = c.height = T;
-        ARTE.pintarAvatar(c, avatar, d, p);
+        ARTE.pintarPersonaje(c, avatar, d, p);
         return c;
       });
     }
     sprNpc = {};
     for (const n of mapa.npcs) {
       const c = document.createElement('canvas');
-      c.width = c.height = T;
-      ARTE.pintarAvatar(c, ARTE.NPCS[n.sprite], 'abajo', 0);
+      ARTE.pintarPersonaje(c, ARTE.NPCS[n.sprite], 'abajo', 0);
       sprNpc[n.id] = c;
     }
   }
@@ -92,9 +90,8 @@
     const f = fondo.getContext('2d');
     for (let y = 0; y < FILAS; y++) {
       for (let x = 0; x < COLS; x++) {
-        let ch = celda(x, y);
-        if (ch === '.' && mapa.estilo !== 'interior' && (x * 31 + y * 17) % 7 === 0) ch = 'f';
-        f.drawImage(ARTE.tile(ch, mapa.estilo), x * T, y * T);
+        const ch = celda(x, y);
+        f.drawImage(ARTE.tile(ch, mapa.estilo, { x, y, izq: celda(x - 1, y) === ch, der: celda(x + 1, y) === ch }), x * T, y * T);
       }
     }
   }
@@ -124,14 +121,14 @@
     ajustar();
   }
 
-  // Tamaño en pantalla: x2 (32 px por tile) si cabe; si no, se reduce para no hacer scroll.
+  // Tamaño en pantalla: x1 (tiles de 32 px) si cabe; si no, se reduce para no hacer scroll.
   function ajustar() {
     if (!canvas || !mapa) return;
     const sec = $('mapa');
     const ctl = $('controles');
     const usado = $('mapa-barra').offsetHeight + (ctl.classList.contains('oculto') ? 0 : ctl.offsetHeight) + 16;
-    let e = Math.min(2, (sec.clientHeight - usado) / (FILAS * T), (sec.clientWidth - 8) / (COLS * T));
-    if (e < 2) e = Math.max(1, Math.floor(e * 4) / 4);
+    let e = Math.min(1, (sec.clientHeight - usado) / (FILAS * T), (sec.clientWidth - 8) / (COLS * T));
+    if (e < 1) e = Math.max(0.5, Math.floor(e * 4) / 4);
     canvas.style.width = COLS * T * e + 'px';
     canvas.style.height = FILAS * T * e + 'px';
   }
@@ -220,18 +217,20 @@
     }
   }
 
-  // Flecha amarilla que rebota sobre la meta (siguiente NPC o salida).
+  // Flecha amarilla que rebota sobre la meta (siguiente NPC o salida), al doble de tamaño.
   function flecha(m, ahora) {
-    const cx = m.x * T + 8;
-    let y = Math.max(1, m.y * T - 8) + Math.floor(ahora / 250) % 2 * 2;
-    const tri = (color, ancho, alto, dy) => {
+    ctx.save();
+    ctx.translate(m.x * T + T / 2, Math.max(4, m.y * T - 22) + (Math.floor(ahora / 250) % 2) * 3);
+    ctx.scale(2, 2);
+    const tri = (color, ancho, alto) => {
       ctx.fillStyle = ARTE.PALETA[color];
-      for (let i = 0; i < alto; i++) ctx.fillRect(cx - (ancho - 2 * i - 1) / 2, y + dy + i, ancho - 2 * i, 1);
+      for (let i = 0; i < alto; i++) ctx.fillRect(-(ancho - 2 * i) / 2, i, ancho - 2 * i, 1);
     };
-    tri('k', 9, 5, 0);
+    tri('k', 9, 5);
     ctx.fillStyle = ARTE.PALETA.k;
-    ctx.fillRect(cx - 3, y - 1, 7, 1);
-    tri('Y', 7, 4, 0);
+    ctx.fillRect(-3.5, -1, 7, 1);
+    tri('Y', 7, 4);
+    ctx.restore();
   }
 
   function dibujar(ahora) {
@@ -239,8 +238,8 @@
     if (destino && Math.floor(ahora / 250) % 2) {
       ctx.fillStyle = ARTE.PALETA.Y;
       const x = destino.x * T, y = destino.y * T;
-      [[0, 0], [T - 4, 0], [0, T - 1], [T - 4, T - 1]].forEach(([a, b]) => ctx.fillRect(x + a, y + b, 4, 1));
-      [[0, 0], [T - 1, 0], [0, T - 4], [T - 1, T - 4]].forEach(([a, b]) => ctx.fillRect(x + a, y + b, 1, 4));
+      [[0, 0], [T - 8, 0], [0, T - 2], [T - 8, T - 2]].forEach(([a, b]) => ctx.fillRect(x + a, y + b, 8, 2));
+      [[0, 0], [T - 2, 0], [0, T - 8], [T - 2, T - 8]].forEach(([a, b]) => ctx.fillRect(x + a, y + b, 2, 8));
     }
     let px = jug.x * T, py = jug.y * T;
     if (jug.mov) {

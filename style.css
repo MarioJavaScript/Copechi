@@ -70,14 +70,14 @@ h2 { font-size: 18px; margin: 0; color: #35203b; }
 /* Mapa (vista desde arriba) */
 #mapa { justify-content: flex-start; gap: 4px; padding: 4px; }
 .mapa-barra { width: 100%; height: 64px; flex: none; display: flex; align-items: center; justify-content: space-between; }
-.mapa-nombre { font-size: 16px; color: #35203b; padding-left: 8px; }
+.mapa-nombre { font-size: 16px; color: #fff; background: var(--u); padding: 6px 12px; margin-left: 8px; box-shadow: 0 -2px 0 0 var(--k), 0 2px 0 0 var(--k), -2px 0 0 0 var(--k), 2px 0 0 0 var(--k), 4px 4px 0 0 var(--k); }
 #mapa-canvas { width: 352px; height: 448px; flex: none; border: 0; touch-action: none; background: #5ed04f; }
 .controles { display: flex; gap: 24px; justify-content: center; flex: none; }
 .controles.oculto { display: none; }
 #mapa .btn { width: 64px; height: 64px; padding: 0; font-size: 28px; touch-action: none; }
 .mapa-nombre { flex: none; }
-.mapa-estrellas { flex: 1; display: flex; gap: 4px; justify-content: center; }
-.mapa-estrellas canvas { width: 24px; height: 24px; }
+.mapa-estrellas { flex: none; display: flex; gap: 4px; justify-content: center; align-items: center; background: var(--b); padding: 4px 8px; margin-right: 8px; box-shadow: 0 -2px 0 0 var(--k), 0 2px 0 0 var(--k), -2px 0 0 0 var(--k), 2px 0 0 0 var(--k), 4px 4px 0 0 var(--k); }
+.mapa-estrellas canvas { width: 32px; height: 32px; }
 .fundido { position: absolute; inset: 0; z-index: 5; background: #35203b; opacity: 0; pointer-events: none; transition: opacity .3s linear; }
 .fundido.negro { opacity: 1; }
 

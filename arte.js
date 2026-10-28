@@ -82,39 +82,54 @@
     capaEspejo(ctx, 32, COP.cara[expr] || COP.cara.neutral);
   }
 
-  // ---------- Avatar (16x16, mitad de 8 columnas) ----------
+  // ---------- Personajes (32x32, mitad izquierda de 16 columnas) ----------
   // S = piel, H = pelo, C = color de ropa (se sustituyen al dibujar)
-  const AV = {
+  const PJ = {
     base: {
-      2: '..kSSSSS', 3: '.kSSSSSS', 4: '.kSSSSSS', 5: '.kSSSSSS', 6: '.kSSSSSS', 7: '..kSSSSS',
-      8: '...kkkkk',
+      3: '...........kkkkk', 4: '.........kkSSSSS', 5: '........kSSSSSSS', 6: '........kSSSSSSS', 7: '........kSSSSSSS',
+      8: '........kSSSSSSS', 9: '........kSSSSSSS', 10: '........kSSSSSSS', 11: '........kSSSSSSS', 12: '........kSSSSSSS',
+      13: '........kSSSSSSS', 14: '.........kSSSSSS', 15: '..........kkSSSS', 16: '............kkkk',
     },
-    cara: { // de frente (mitad), por expresión
-      neutral: { 4: '....k...', 5: '..p.k...', 6: '.......k' },
-      contenta: { 4: '....k...', 5: '..p.k...', 6: '.....k..', 7: '......kk' },
-      triste: { 4: '....k...', 5: '....k...', 6: '...b..kk', 7: '.....k..' },
-    },
-    caraLado: { 4: '...k..k.........', 5: '..pk..k.........', 6: '...kk...........' }, // mirando a la izquierda (completa)
-    pelo: {
-      corto: { 0: '...kkkkk', 1: '..kHHHHH', 2: '.kHHHHHH', 3: '.kHHHHHH', 4: '.kH.....' },
-      largo: {
-        0: '...kkkkk', 1: '..kHHHHH', 2: '.kHHHHHH', 3: '.kHHHHHH', 4: '.kHH....', 5: '.kHH....',
-        6: '.kHH....', 7: '.kHH....', 8: '.kHH....', 9: '.kHH....', 10: '.kHH....',
+    cara: { // de frente, por expresión
+      neutral: { 9: '..........kw....', 10: '..........kk....', 11: '..........kk....', 12: '.........pp.....', 13: '..............kk' },
+      contenta: { 10: '..........kk....', 11: '.........k..k...', 12: '.........pp.....', 13: '............k...', 14: '.............kkk' },
+      triste: {
+        8: '...........kk...', 9: '..........kw....', 10: '..........kk....', 11: '..........kk....',
+        12: '.........bp.....', 13: '.........b...kkk', 14: '............k...',
       },
-      chongos: { 0: '.kHHkkkk', 1: 'kHHHHHHH', 2: '.kHHHHHH', 3: '.kHHHHHH', 4: '.kH.....' },
+    },
+    pelo: {
+      corto: {
+        2: '..........kkkkkk', 3: '........kkHHHHHH', 4: '........kHHHHHHH', 5: '........kHHHHHHH', 6: '........kHHHHHHH',
+        7: '........kHHHHHHH', 8: '........kHHHHH..', 9: '........kH......', 10: '........kH......', 11: '........kH......',
+      },
+      largo: {
+        2: '..........kkkkkk', 3: '........kkHHHHHH', 4: '........kHHHHHHH', 5: '........kHHHHHHH', 6: '........kHHHHHHH',
+        7: '........kHHHHHHH', 8: '........kHHHHH..', 9: '........kH......', 10: '........kH......', 11: '........kH......',
+        12: '.....kHHk.......', 13: '.....kHHk.......', 14: '.....kHHk.......', 15: '.....kHHk.......', 16: '.....kHHk.......',
+        17: '.....kHHk.......', 18: '.....kHHk.......', 19: '.....kHHk.......', 20: '.....kHHk.......', 21: '.....kkkk.......',
+      },
+      chongos: {
+        0: '....kkkk........', 1: '...kHHHHk.......', 2: '...kHHHHk.kkkkkk', 3: '....kkkkkkkHHHHH', 4: '........kHHHHHHH',
+        5: '........kHHHHHHH', 6: '........kHHHHHHH', 7: '........kHHHHHHH', 8: '........kHHHHH..', 9: '........kH......',
+        10: '........kH......', 11: '........kH......',
+      },
     },
     ropa: {
       camiseta: {
-        9: '..kCCCCC', 10: '.kCCCCCC', 11: '.kCCCCCC', 12: '..kCCCCC',
-        13: '..kooooo', 14: '..kooook', 15: '..kkkkk.',
+        17: '.......kkCCCCCCC', 18: '......kCCCCCCCCC', 19: '......kCCCCCCCCC', 20: '......kSkCCCCCCC', 21: '......kSkCCCCCCC',
+        22: '......kSkCCCCCCC', 23: '.......kkCCCCCCC', 24: '.........koooooo', 25: '.........koooooo',
+        26: '.........kooook.', 27: '.........kooook.', 28: '.........kkkkkk.',
       },
       vestido: {
-        9: '..kCCCCC', 10: '..kCCCCC', 11: '.kCCCCCC', 12: '.kCCCCCC', 13: 'kCCCCCCC',
-        14: 'kkkkkkkk', 15: '...kSk..',
+        17: '.......kkCCCCCCC', 18: '......kCCCCCCCCC', 19: '......kCCCCCCCCC', 20: '......kSkCCCCCCC', 21: '......kSkCCCCCCC',
+        22: '.....kCCCCCCCCCC', 23: '....kCCCCCCCCCCC', 24: '....kCCCCCCCCCCC', 25: '....kkkkkkkkkkkk',
+        26: '.........kSSSk..', 27: '.........kSSSk..', 28: '.........kkkkkk.',
       },
       overol: {
-        9: '..kwCwww', 10: '..kwCCCC', 11: '.kwwCCCC', 12: '..kwCCCC',
-        13: '..kCCCCC', 14: '..kCCCCk', 15: '..kkkkk.',
+        17: '.......kkwwwwwww', 18: '......kwwwCwwwww', 19: '......kwwwCwwwww', 20: '......kSkCCCCCCC', 21: '......kSkCCCCCCC',
+        22: '......kSkCCCCCCC', 23: '.......kkCCCCCCC', 24: '.........kCCCCCC', 25: '.........kCCCCCC',
+        26: '.........kCCCCk.', 27: '.........kCCCCk.', 28: '.........kkkkkk.',
       },
     },
   };
@@ -129,22 +144,27 @@
     { estilo: 'vestido', color: 'y' }, { estilo: 'camiseta', color: 'p' }, { estilo: 'overol', color: 'u' },
   ];
 
-  // dir: 'abajo' | 'arriba' | 'izquierda' | 'derecha'. paso: 0 quieto, 1 y 2 alternan el pie levantado al caminar.
-  function pintarAvatar(canvas, a, dir = 'abajo', paso = 0, expr = 'neutral') {
+  // dir: 'abajo' | 'arriba' | 'izquierda' | 'derecha'. paso: 0 quieto, 1 y 2 alternan la pierna levantada al caminar.
+  function pintarPersonaje(canvas, a, dir = 'abajo', paso = 0, expr = 'neutral') {
+    canvas.width = canvas.height = 32;
     const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, 16, 16);
+    ctx.clearRect(0, 0, 32, 32);
     const pelo = PELO[a.pelo], ropa = ROPA[a.ropa];
     const sust = { S: PIEL[a.piel], H: pelo.color, C: ropa.color };
     ctx.save();
-    if (dir === 'derecha') { ctx.translate(16, 0); ctx.scale(-1, 1); }
-    capaEspejo(ctx, 16, AV.base, dir === 'arriba' ? { ...sust, S: pelo.color } : sust);
-    if (dir === 'abajo') capaEspejo(ctx, 16, AV.cara[expr] || AV.cara.neutral, sust);
-    else if (dir !== 'arriba') capa(ctx, AV.caraLado, sust);
-    capaEspejo(ctx, 16, AV.ropa[ropa.estilo], sust);
-    capaEspejo(ctx, 16, AV.pelo[pelo.estilo], sust);
+    if (dir === 'derecha') { ctx.translate(32, 0); ctx.scale(-1, 1); }
+    ctx.translate(0, paso ? 0 : 1); // al caminar el cuerpo "rebota" 1 px
+    capaEspejo(ctx, 32, PJ.base, dir === 'arriba' ? { ...sust, S: pelo.color } : sust);
+    if (dir === 'abajo') capaEspejo(ctx, 32, PJ.cara[expr] || PJ.cara.neutral, sust);
+    else if (dir !== 'arriba') { // de lado: los dos ojos del lado de la cara, boca al frente
+      pt(ctx, 'k', 10, 9, 2, 3); pt(ctx, 'w', 11, 9); pt(ctx, 'k', 14, 9, 2, 3); pt(ctx, 'w', 15, 9);
+      pt(ctx, 'p', 9, 12, 2, 1); pt(ctx, 'k', 9, 13, 3, 1);
+    }
+    capaEspejo(ctx, 32, PJ.ropa[ropa.estilo], sust);
+    capaEspejo(ctx, 32, PJ.pelo[pelo.estilo], sust);
     ctx.restore();
-    if (paso === 1) ctx.clearRect(2, 15, 5, 1);
-    if (paso === 2) ctx.clearRect(9, 15, 5, 1);
+    if (paso === 1) ctx.clearRect(9, 27, 6, 2);   // pierna izquierda levantada
+    if (paso === 2) ctx.clearRect(17, 27, 6, 2);  // pierna derecha levantada
   }
 
   // Personajes (NPC): mismas piezas del avatar.
@@ -152,55 +172,170 @@
     sofi: { piel: 1, pelo: 1, ropa: 3 },
     leo: { piel: 0, pelo: 3, ropa: 2 },
     maestra: { piel: 2, pelo: 4, ropa: 1 },
-    amigo: { piel: 0, pelo: 0, ropa: 0 },
+    amigo: { piel: 1, pelo: 3, ropa: 5 },
   };
 
-  // ---------- Tiles del mapa (16x16, mitad izquierda de 8 columnas) ----------
-  const TILES = {
-    '.': { fondo: 'g', filas: { 10: '...G....', 11: '...G....' } },
-    f: { fondo: 'g', filas: { 6: '.....w..', 7: '....wyw.', 8: '.....w..' } },
-    '#': { fondo: 'G', filas: { 2: '.gg...g.', 5: '...gg...', 7: 'g....gg.', 10: '.gg..g..', 13: '....gg..', 15: 'kkkkkkkk' } },
-    T: {
-      fondo: 'g',
-      filas: {
-        1: '....kkkk', 2: '..kkGGGG', 3: '.kGGGGgg', 4: 'kGGgGGGG', 5: 'kGGGGGgG', 6: 'kGgGGGGG',
-        7: 'kGGGGGgg', 8: '.kGGGGGG', 9: '..kkGGGG', 10: '....kkkk', 11: '.....koo', 12: '.....koo',
-        13: '.....koo', 14: '....kkkk',
+  // ---------- Tiles del mapa (32x32): rectas de colores y azar repetible ----------
+  const disco32 = (ctx, cx, cy, rad, c) => {
+    ctx.fillStyle = PALETA[c];
+    for (let y = Math.floor(cy - rad); y <= Math.ceil(cy + rad); y++) for (let x = Math.floor(cx - rad); x <= Math.ceil(cx + rad); x++) {
+      if ((x + 0.5 - cx) ** 2 + (y + 0.5 - cy) ** 2 <= rad * rad) ctx.fillRect(x, y, 1, 1);
+    }
+  };
+  const rr = (n, s) => Math.floor(az(n + s * 7.31) * 1000);
+  function pasto(ctx, s) {
+    R(ctx, 'g', 0, 0, 32, 32);
+    for (let i = 0; i < 12; i++) {
+      const x = 1 + rr(i * 3, s) % 28, y = 2 + rr(i * 3 + 1, s) % 27;
+      R(ctx, 'G', x, y, 1, 2); R(ctx, 'G', x + 2, y + 1, 1, 1);
+    }
+  }
+  function flores(ctx, s, colores) {
+    pasto(ctx, s);
+    for (let i = 0; i < 3; i++) {
+      const x = 3 + rr(i * 5 + 40, s) % 24, y = 3 + rr(i * 5 + 41, s) % 22, c = colores[i % colores.length];
+      R(ctx, 'G', x + 1, y + 3, 1, 4);
+      R(ctx, c, x + 1, y, 1, 3); R(ctx, c, x, y + 1, 3, 1); R(ctx, 'Y', x + 1, y + 1, 1, 1);
+    }
+  }
+  const sombraSuelo = (ctx, x, y, w) => { R(ctx, 'G', x, y, w, 3); R(ctx, 'G', x + 2, y + 3, w - 4, 1); };
+  const pisoMadera = (ctx, v) => {
+    R(ctx, 'y', 0, 0, 32, 32);
+    for (let i = 0; i < 4; i++) {
+      const y = i * 8;
+      R(ctx, 'Y', 0, y + 7, 32, 1);
+      const x = [10, 22, 4, 16][(i + v) % 4];
+      R(ctx, 'Y', x, y, 1, 7);
+      R(ctx, 'o', x + 3, y + 3, 1, 1); R(ctx, 'o', (x + 15) % 30 + 1, y + 3, 1, 1);
+    }
+  };
+  const paredCara = (ctx) => { // pared vista de frente: papel rosa con rayas y zócalo de madera
+    R(ctx, 'p', 0, 0, 32, 32);
+    for (let x = 3; x < 32; x += 8) R(ctx, 'w', x, 0, 1, 26);
+    for (let x = 7; x < 32; x += 8) for (let y = 3; y < 24; y += 8) R(ctx, 'r', x, y, 2, 2);
+    R(ctx, 'k', 0, 25, 32, 1); R(ctx, 'o', 0, 26, 32, 6); R(ctx, 'Y', 0, 26, 32, 1); R(ctx, 'k', 0, 31, 32, 1);
+  };
+  const ladrillos = (ctx) => {
+    R(ctx, 'o', 0, 0, 32, 32);
+    for (let f = 0; f < 4; f++) {
+      R(ctx, 'k', 0, f * 8, 32, 1);
+      const o = f % 2 ? 8 : 0;
+      R(ctx, 'k', o, f * 8, 1, 8); R(ctx, 'k', o + 16, f * 8, 1, 8);
+      R(ctx, 'Y', 1 + o, f * 8 + 1, 14, 1); R(ctx, 'Y', 17 + o > 31 ? 1 : 17 + o, f * 8 + 1, 14, 1);
+    }
+  };
+
+  const PINTORES = {
+    exterior: {
+      '.': (c, i) => (i.v === 1 ? flores(c, i.s, ['r', 'p', 'w']) : i.v === 2 ? flores(c, i.s, ['w', 'u', 'y']) : pasto(c, i.s)),
+      '#': (c) => {
+        R(c, 'G', 0, 0, 32, 32);
+        [[6, 8, 6], [18, 6, 7], [27, 14, 6], [10, 20, 7], [23, 24, 6], [4, 28, 4]].forEach(([x, y, r]) => { disco32(c, x, y + 1, r, 'k'); disco32(c, x, y, r, 'g'); disco32(c, x + 1, y + 1, r - 2, 'G'); disco32(c, x - 2, y - 2, 2, 'g'); });
+        R(c, 'r', 8, 12, 2, 2); R(c, 'r', 20, 11, 2, 2); R(c, 'r', 14, 24, 2, 2); R(c, 'k', 0, 31, 32, 1);
+      },
+      T: (c, i) => {
+        pasto(c, i.s);
+        R(c, 'G', 5, 24, 22, 5); R(c, 'G', 8, 29, 16, 2);
+        R(c, 'k', 12, 17, 8, 12); R(c, 'o', 13, 18, 6, 10); R(c, 'Y', 13, 18, 2, 10);
+        disco32(c, 16, 12, 14, 'k'); disco32(c, 16, 12, 13, 'G'); disco32(c, 12, 8, 7, 'g'); disco32(c, 21, 10, 4, 'g'); disco32(c, 10, 16, 3, 'g');
+        R(c, 'r', 10, 13, 2, 2); R(c, 'r', 21, 16, 2, 2); R(c, 'r', 16, 6, 2, 2);
+      },
+      B: (c, i) => {
+        pasto(c, i.s);
+        sombraSuelo(c, 3, 27, 26);
+        R(c, 'k', 2, 5, 28, 8); R(c, 'o', 3, 6, 26, 6); R(c, 'k', 3, 9, 26, 1);
+        R(c, 'k', 5, 20, 5, 8); R(c, 'o', 6, 21, 3, 6); R(c, 'k', 22, 20, 5, 8); R(c, 'o', 23, 21, 3, 6);
+        R(c, 'k', 2, 12, 28, 9); R(c, 'Y', 3, 13, 26, 7); R(c, 'y', 3, 13, 26, 2);
+      },
+      E: (c) => { R(c, 'y', 0, 0, 32, 32); for (let k = 0; k < 14; k++) R(c, 'Y', 1 + rr(k, 1) % 30, 1 + rr(k + 20, 1) % 30, 2, 1); estera(c); },
+      S: (c, i) => { // columpio
+        pasto(c, i.s); sombraSuelo(c, 3, 27, 26);
+        R(c, 'k', 3, 3, 26, 6); R(c, 'r', 4, 4, 24, 4); R(c, 'k', 4, 3, 5, 25); R(c, 'o', 5, 8, 3, 19); R(c, 'k', 23, 3, 5, 25); R(c, 'o', 24, 8, 3, 19);
+        R(c, 'k', 11, 8, 1, 13); R(c, 'k', 20, 8, 1, 13); R(c, 'k', 9, 20, 13, 4); R(c, 'y', 10, 21, 11, 2);
+      },
+      D: (c, i) => { // resbaladilla
+        pasto(c, i.s); sombraSuelo(c, 3, 27, 26);
+        R(c, 'k', 3, 5, 5, 23); R(c, 'o', 4, 6, 3, 21); for (let y = 9; y < 26; y += 4) R(c, 'k', 4, y, 3, 1);
+        R(c, 'k', 3, 3, 11, 5); R(c, 'y', 4, 4, 9, 3);
+        for (let k = 0; k < 17; k++) { R(c, 'k', 11 + k, 7 + k, 8, 3); }
+        for (let k = 0; k < 17; k++) { R(c, 'B', 12 + k, 8 + k, 6, 1); R(c, 'b', 13 + k, 8 + k, 2, 1); }
+      },
+      a: (c) => { // arenero
+        R(c, 'y', 0, 0, 32, 32); for (let k = 0; k < 22; k++) R(c, 'Y', 1 + rr(k, 3) % 30, 1 + rr(k + 30, 3) % 30, 1, 1);
+        R(c, 'w', 5, 22, 2, 1); R(c, 'w', 22, 8, 2, 1);
       },
     },
-    B: {
-      fondo: 'g',
-      filas: { 5: '.kkkkkkk', 6: '.kYYYYYY', 7: '.koooooo', 8: '.kkkkkkk', 9: '.kk.....', 10: '.kk.....' },
-    },
-    E: { fondo: 'y', filas: { 0: 'YYYYYYYY', 7: '...YYYYY', 8: '...YYYYY', 15: 'YYYYYYYY' } },
-  };
-  // Interior (salón): piso de madera, pared de ladrillo y pupitres. Lo demás se hereda de TILES.
-  const TILES_INT = {
-    '.': { fondo: 'y', filas: { 7: 'YYYYYYYY', 15: 'YYYYYYYY' } },
-    '#': {
-      fondo: 'o',
-      filas: {
-        0: 'kkkkkkkk', 1: '......k.', 2: '......k.', 3: '......k.', 4: '......k.', 5: '......k.', 6: '......k.', 7: '......k.',
-        8: 'kkkkkkkk', 9: '..k.....', 10: '..k.....', 11: '..k.....', 12: '..k.....', 13: '..k.....', 14: '..k.....', 15: '..k.....',
+    interior: {
+      '.': (c, i) => pisoMadera(c, i.v),
+      '#': (c, i) => (i.arriba ? paredCara(c) : ladrillos(c)),
+      W: (c, i) => {
+        paredCara(c);
+        const x0 = i.izq ? 0 : 3, x1 = i.der ? 32 : 29;
+        R(c, 'k', x0, 4, x1 - x0, 19);
+        const g0 = x0 + (i.izq ? 0 : 2), g1 = x1 - (i.der ? 0 : 2);
+        R(c, 'B', g0, 6, g1 - g0, 7); R(c, 'b', g0, 13, g1 - g0, 8);
+        R(c, 'w', g0 + 3, 8, 6, 2); R(c, 'w', g0 + 5, 7, 3, 1);
+        R(c, 'k', g0, 13, g1 - g0, 1);
+        if (!i.der) R(c, 'k', 15, 6, 1, 15);
+        R(c, 'w', x0 - 1 < 0 ? 0 : x0 - 1, 23, x1 - x0 + (i.izq ? 0 : 2), 2); R(c, 'k', x0 - 1 < 0 ? 0 : x0 - 1, 25, x1 - x0 + 2, 1);
       },
-    },
-    B: {
-      fondo: 'y',
-      filas: { 4: '.kkkkkkk', 5: '.kYYYYYY', 6: '.kYYYYYY', 7: '.kkkkkkk', 8: '.ko.....', 9: '.ko.....', 10: 'kkk.....' },
+      Z: (c, i) => {
+        paredCara(c);
+        const x0 = i.izq ? 0 : 2, x1 = i.der ? 32 : 30;
+        R(c, 'k', x0, 3, x1 - x0, 20); R(c, 'o', x0 + (i.izq ? 0 : 1), 4, x1 - x0 - (i.izq ? 0 : 1) - (i.der ? 0 : 1), 18);
+        R(c, 'G', x0 + (i.izq ? 0 : 3), 6, x1 - x0 - (i.izq ? 0 : 3) - (i.der ? 0 : 3), 14);
+        if (!i.izq) { R(c, 'w', 6, 9, 10, 1); R(c, 'w', 6, 13, 18, 1); R(c, 'w', 6, 16, 8, 1); }
+        else if (!i.der) { R(c, 'w', 4, 10, 6, 1); R(c, 'p', 14, 13, 8, 1); R(c, 'y', 20, 8, 3, 3); }
+        else { R(c, 'w', 4, 9, 20, 1); R(c, 'w', 8, 14, 12, 1); }
+        R(c, 'Y', x0, 22, x1 - x0, 2); R(c, 'k', x0, 24, x1 - x0, 1);
+        if (!i.der) { R(c, 'w', x1 - 8, 22, 4, 1); R(c, 'p', x1 - 14, 22, 3, 1); }
+      },
+      B: (c, i) => { // pupitre con silla
+        pisoMadera(c, i.v);
+        R(c, 'k', 8, 23, 16, 8); R(c, 'u', 9, 24, 14, 6); R(c, 'k', 6, 21, 3, 5); R(c, 'k', 23, 21, 3, 5);
+        R(c, 'k', 4, 6, 24, 16); R(c, 'Y', 5, 7, 22, 14); R(c, 'y', 5, 7, 22, 2); R(c, 'o', 5, 18, 22, 3);
+        R(c, 'B', 8, 10, 6, 5); R(c, 'w', 9, 11, 4, 1); R(c, 'r', 18, 12, 6, 1); R(c, 'w', 18, 14, 3, 2);
+      },
+      L: (c, i) => { // librero
+        pisoMadera(c, i.v);
+        R(c, 'k', 2, 2, 28, 28); R(c, 'o', 3, 3, 26, 26); R(c, 'k', 3, 11, 26, 1); R(c, 'k', 3, 19, 26, 1);
+        const col = ['r', 'B', 'g', 'y', 'u', 'e', 'p'];
+        [[3, 11], [11, 19], [19, 27]].forEach(([top, base], fila) => {
+          for (let x = 4, n = 0; x < 28; x += 4, n++) { const h = 5 + rr(n + fila * 9, 2) % 3; R(c, 'k', x - 1, base - h - 1, 4, h + 1); R(c, col[(n + fila * 3) % col.length], x, base - h, 2, h); }
+        });
+      },
+      C: (c, i) => { // cama
+        pisoMadera(c, i.v);
+        R(c, 'k', 3, 2, 26, 28); R(c, 'o', 4, 3, 24, 26);
+        R(c, 'k', 6, 4, 20, 9); R(c, 'w', 7, 5, 18, 7);
+        R(c, 'k', 5, 12, 22, 17); R(c, 'B', 6, 13, 20, 15); R(c, 'b', 6, 17, 20, 2); R(c, 'b', 6, 22, 20, 2);
+      },
+      M: (c, i) => { // escritorio con compu y chat
+        pisoMadera(c, i.v);
+        R(c, 'k', 2, 12, 28, 15); R(c, 'Y', 3, 13, 26, 13); R(c, 'y', 3, 13, 26, 2);
+        R(c, 'k', 7, 2, 18, 13); R(c, 'B', 9, 4, 14, 8); R(c, 'w', 10, 5, 7, 2); R(c, 'y', 14, 8, 8, 2); R(c, 'k', 14, 15, 4, 2);
+        R(c, 'k', 9, 19, 14, 5); R(c, 'w', 10, 20, 12, 3); R(c, 'k', 12, 21, 8, 1); R(c, 'r', 25, 20, 3, 4);
+      },
+      E: (c, i) => { pisoMadera(c, i.v); estera(c); },
     },
   };
+  function estera(c) { // tapete de salida
+    R(c, 'k', 3, 9, 26, 15); R(c, 'r', 5, 11, 22, 11); R(c, 'y', 5, 15, 22, 3); R(c, 'w', 8, 13, 2, 1); R(c, 'w', 22, 19, 2, 1);
+  }
+
   const tilesCache = {};
-  function tile(clave, estilo) {
-    const interior = estilo === 'interior';
-    const def = (interior && TILES_INT[clave]) || TILES[clave] || TILES['.'];
-    const k = (interior && TILES_INT[clave] ? 'i' : '') + ((interior && TILES_INT[clave]) || TILES[clave] ? clave : '.');
+  // clave: carácter del mapa. info: { x, y, izq, der } (izq/der: el vecino es el mismo tile, para objetos de varios tiles).
+  function tile(clave, estilo, info = {}) {
+    const est = estilo === 'interior' ? 'interior' : 'exterior';
+    const p = PINTORES[est][clave] ? clave : '.';
+    const x = info.x || 0, y = info.y || 0;
+    const v = est === 'exterior' ? ((x * 31 + y * 17) % 11 < 2 ? 1 : (x * 31 + y * 17) % 11 === 2 ? 2 : 0) : (x + y) % 2;
+    const i = { x, y, v, s: (x * 7 + y * 13) % 5, izq: !!info.izq, der: !!info.der, arriba: info.y === 0 };
+    const k = [est, p, v, i.s, i.izq ? 1 : 0, i.der ? 1 : 0, i.arriba ? 1 : 0].join(':');
     if (!tilesCache[k]) {
       const c = document.createElement('canvas');
-      c.width = c.height = 16;
-      const ctx = c.getContext('2d');
-      ctx.fillStyle = PALETA[def.fondo];
-      ctx.fillRect(0, 0, 16, 16);
-      capaEspejo(ctx, 16, def.filas);
+      c.width = c.height = 32;
+      PINTORES[est][p](c.getContext('2d'), i);
       tilesCache[k] = c;
     }
     return tilesCache[k];
@@ -393,14 +528,14 @@
     ctx.fillStyle = PALETA.w; // nubecita de fondo
     ctx.fillRect(3, 4, 6, 2); ctx.fillRect(5, 3, 3, 1);
     const tmp = document.createElement('canvas');
-    tmp.width = tmp.height = quien === 'copechi' ? 32 : 16;
+    tmp.width = tmp.height = 32;
     if (quien === 'copechi') {
       pintarCopechi(tmp, expr, 0);
       ctx.drawImage(tmp, 0, 0);
     } else {
-      pintarAvatar(tmp, NPCS[quien], 'abajo', 0, expr);
+      pintarPersonaje(tmp, NPCS[quien], 'abajo', 0, expr);
       ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(tmp, 0, 0, 16, 12, 0, 8, 32, 24); // cabeza y hombros al doble
+      ctx.drawImage(tmp, 8, 2, 16, 16, 0, 0, 32, 32); // la cabeza, al doble
     }
   }
 
@@ -411,9 +546,8 @@
   const pt = (ctx, c, x, y, w = 1, h = 1) => { ctx.fillStyle = PALETA[c]; ctx.fillRect(x, y, w, h); };
   const cabezaAv = (ctx, quien) => { // cabeza de un personaje como ícono
     const t = document.createElement('canvas');
-    t.width = t.height = 16;
-    pintarAvatar(t, NPCS[quien], 'abajo', 0, 'contenta');
-    ctx.drawImage(t, 0, 0, 16, 10, 0, 3, 16, 10);
+    pintarPersonaje(t, NPCS[quien], 'abajo', 0, 'contenta');
+    ctx.drawImage(t, 8, 2, 16, 16, 0, 0, 16, 16);
   };
   const ICONOS_MATRIZ = { // mitades de 8 columnas
     corazon: {
@@ -489,9 +623,9 @@
   }
 
   window.ARTE = {
-    PALETA, COP, AV, ESTRELLA, TILES, TILES_INT, NPCS, ICONOS_MATRIZ, FONDOS: Object.keys(FONDOS),
+    PALETA, COP, PJ, ESTRELLA, NPCS, ICONOS_MATRIZ, FONDOS: Object.keys(FONDOS),
     N_PIEL: PIEL.length, N_PELO: PELO.length, N_ROPA: ROPA.length,
-    tile, pintarRetrato, pintarIcono, pintarTitulo, pintarInicio, pintarNube, pintarMini, CHISPA, FLOR, FUENTE, pintarCopechi, pintarAvatar, pintarEstrella, pintarFondo, repintarCopechis, animar,
+    tile, pintarRetrato, pintarIcono, pintarTitulo, pintarInicio, pintarNube, pintarMini, CHISPA, FLOR, FUENTE, pintarCopechi, pintarPersonaje, pintarEstrella, pintarFondo, repintarCopechis, animar,
     get frame() { return frame; },
   };
 })();
