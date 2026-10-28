@@ -22,7 +22,7 @@ Videojuego web para el Hackatón Misión Copechi (entrega 28-oct-2026, 18:30). M
 - Vibración corta (`navigator.vibrate`) opcional al elegir, con comprobación de soporte.
 
 ## Arte: pixel art sencillo
-- Paleta de máximo 16 colores, tonos cálidos. Sin degradados ni sombras difusas.
+- Paleta de máximo 16 colores vivos (cielo azul, pasto verde, amarillo sol, coral, naranja, morado, verde azulado, contorno oscuro; ver `PALETA` en `arte.js`, sin beige). Sin degradados, blur ni sombras difusas: bandas de color, sombras sólidas desplazadas 4 px y dithering.
 - Todo el arte vive en `arte.js` (sprites simétricos como mitad izquierda, se espejan; check.js valida sus tamaños). Sprites 16x16 o 32x32 como matrices en JS, dibujados en canvas o CSS, con `image-rendering: pixelated`. Sin imágenes externas ni internet.
 - Fuente pixel con fallback a monospace.
 

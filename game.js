@@ -18,6 +18,46 @@
   const vibrar = (ms) => { if (navigator.vibrate) navigator.vibrate(ms); };
   const expresion = (canvas, e) => { canvas.dataset.expr = e; ARTE.pintarCopechi(canvas, e, ARTE.frame); };
 
+  // ---- Pantalla de inicio (arte pixel) ----
+  const NUBES = [ // [ancho, alto, burbujas, arriba %, duración s, desfase s]
+    [26, 10, [[7, 6, 4], [13, 4, 5], [19, 6, 4], [13, 6, 6]], 10, 95, -20],
+    [20, 8, [[6, 5, 3], [11, 3, 4], [15, 5, 3], [10, 5, 4]], 22, 130, -80],
+    [30, 11, [[8, 7, 4], [15, 5, 6], [22, 7, 4], [15, 7, 6]], 33, 160, -45],
+  ];
+  const CHISPAS = [[10, 6], [88, 27], [14, 38], [74, 8], [92, 12], [30, 22]];
+  const FLORES = [[6, 77, 'r'], [20, 90, 'y'], [80, 88, 'p'], [93, 78, 'u'], [38, 93, 'w']];
+  function pintarInicio() {
+    const W = Math.ceil(innerWidth / 4), H = Math.ceil(innerHeight / 4);
+    const fondo = $('inicio-fondo');
+    ARTE.pintarInicio(fondo, W, H);
+    fondo.style.width = W * 4 + 'px';
+    fondo.style.height = H * 4 + 'px';
+  }
+  function decorarInicio() {
+    ARTE.pintarTitulo($('titulo'));
+    const deco = $('inicio-deco');
+    NUBES.forEach(([w, h, b, top, dur, delay]) => {
+      const c = document.createElement('canvas');
+      ARTE.pintarNube(c, w, h, b);
+      c.className = 'nube';
+      Object.assign(c.style, { width: w * 4 + 'px', height: h * 4 + 'px', top: top + '%', animationDuration: dur + 's', animationDelay: delay + 's' });
+      deco.append(c);
+    });
+    const mini = (filas, sust, x, y, i, k) => {
+      const caja = document.createElement('div');
+      caja.className = 'chispa';
+      const ancho = filas[0][0].length, alto = filas[0].length;
+      Object.assign(caja.style, { left: x + '%', top: y + '%', width: ancho * 4 + 'px', height: alto * 4 + 'px' });
+      filas.forEach((f) => { const c = document.createElement('canvas'); ARTE.pintarMini(c, f, sust); c.style.animationDelay = (-i * 0.37) + 's'; caja.append(c); });
+      deco.append(caja);
+    };
+    CHISPAS.forEach(([x, y], i) => mini(ARTE.CHISPA, null, x, y, i));
+    FLORES.forEach(([x, y, c], i) => mini(ARTE.FLOR, { P: c }, x, y, i + 3));
+  }
+  pintarInicio();
+  decorarInicio();
+  window.addEventListener('resize', pintarInicio);
+
   // ---- Voz ----
   function elegirVoz() {
     const vs = speechSynthesis.getVoices();

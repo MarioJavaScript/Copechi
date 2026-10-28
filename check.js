@@ -129,8 +129,10 @@ global.window = { matchMedia: null };
 try {
   require('./arte.js');
   const A = window.ARTE;
+  const validos = new Set([...Object.keys(A.PALETA), '.', 'S', 'H', 'C', 'P']);
   const mitad = (nombre, filas, ancho, alto) => {
     for (const y in filas) {
+      for (const ch of filas[y]) if (!validos.has(ch)) err(`arte.js: ${nombre} fila ${y} usa "${ch}", que no está en la paleta.`);
       if (filas[y].length !== ancho) err(`arte.js: ${nombre} fila ${y} mide ${filas[y].length}, debe medir ${ancho}.`);
       if (+y >= alto) err(`arte.js: ${nombre} fila ${y} fuera del sprite.`);
     }
@@ -139,6 +141,8 @@ try {
     .forEach(([n, f]) => mitad('Copechi ' + n, f, 16, 32));
   mitad('avatar cara', A.AV.cara, 8, 16); mitad('avatar caraLado', A.AV.caraLado, 16, 16);
   for (const [t, d] of [...Object.entries(A.TILES), ...Object.entries(A.TILES_INT).map(([t, d]) => ['int ' + t, d])]) mitad('tile ' + t, d.filas, 8, 16);
+  A.CHISPA.forEach((f, i) => mitad('chispa ' + i, f, 7, 7)); A.FLOR.forEach((f, i) => mitad('flor ' + i, f, 7, 9));
+  for (const [l, f] of Object.entries(A.FUENTE)) { if (f.length !== 7 || f.some((r) => r.length !== 5)) err('arte.js: la letra ' + l + ' debe medir 5x7.'); }
   mitad('estrella', A.ESTRELLA, 8, 16); mitad('avatar base', A.AV.base, 8, 16);
   for (const [k, f] of Object.entries(A.AV.pelo)) mitad('pelo ' + k, f, 8, 16);
   for (const [k, f] of Object.entries(A.AV.ropa)) mitad('ropa ' + k, f, 8, 16);
