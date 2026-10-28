@@ -1,0 +1,22 @@
+{
+  "inicio": "prueba",
+  "escenas": {
+    "prueba": {
+      "text": "¡Hola! Soy La Copechi. Esta es una escena de prueba.",
+      "voz": "¡Hola! Soy La Copechi. Esta es una escena de prueba.",
+      "opciones": [
+        {
+          "text": "¡Todas y todos podemos!",
+          "icono": "🌟",
+          "next": "fin",
+          "feedback": "¡Muy bien! Ningún juego, color ni oficio tiene dueño.",
+          "badge": "estrella"
+        }
+      ]
+    },
+    "fin": {
+      "text": "¡Lo lograste! Si algo te preocupa, platícalo con una persona adulta de confianza.",
+      "final": true
+    }
+  }
+}

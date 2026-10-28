@@ -1,0 +1,11 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; touch-action: manipulation; }
+body {
+  min-height: 100dvh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  background: #fff1c9;
+  color: #4a2c12;
+  font-family: "Press Start 2P", ui-monospace, monospace;
+  font-size: 16px;
+}
+#app { min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; gap: 16px; padding: 16px; }
