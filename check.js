@@ -14,6 +14,11 @@ try {
 }
 
 const escenas = datos.escenas || {};
+// Cada ruta de audio debe apuntar a un archivo que exista (relativa a la raíz del juego).
+const existe = (ruta, donde, campo) => {
+  if (vacio(ruta)) err(`${donde}: "${campo}" está vacío.`);
+  else if (!fs.existsSync(path.join(__dirname, ruta))) err(`${donde}: "${campo}" apunta a un archivo que no existe (${ruta}).`);
+};
 const ids = Object.keys(escenas);
 const vacio = (s) => typeof s !== 'string' || s.trim() === '';
 
@@ -27,6 +32,7 @@ for (const id of ids) {
   const e = escenas[id];
   if (vacio(e.text)) err(`[${id}] falta "text".`);
   if (e.voz !== undefined && vacio(e.voz)) err(`[${id}] "voz" está vacía.`);
+  if (e.audio !== undefined) existe(e.audio, `[${id}]`, 'audio');
   if (e.fondo !== undefined && !FONDOS.includes(e.fondo)) err(`[${id}] fondo desconocido: ${e.fondo}.`);
   const ops = e.opciones || [];
   if (e.final) {
@@ -42,6 +48,7 @@ for (const id of ids) {
     if (vacio(o.icono)) err(`${w}: falta "icono".`);
     if (vacio(o.feedback)) err(`${w}: falta "feedback".`);
     if (o.triste && o.next !== id) err(`${w}: una opción triste debe volver a la misma escena (next: "${id}") para reintentar.`);
+    for (const campo of ['audio', 'audio_fb']) if (o[campo] !== undefined) existe(o[campo], w, campo);
     if (vacio(o.next)) err(`${w}: falta "next".`);
     else if (o.next !== 'mapa' && !escenas[o.next]) err(`${w}: "next" apunta a una escena inexistente (${o.next}).`);
   });

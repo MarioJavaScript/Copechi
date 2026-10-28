@@ -4,12 +4,15 @@
       "fondo": "patio",
       "text": "En el recreo, Sofi quiere jugar fútbol y Leo quiere cuidar muñecos. Alguien dice: «Eso no es para ti».",
       "voz": "En el recreo, Sofi quiere jugar fútbol y Leo quiere cuidar muñecos. Alguien dice: eso no es para ti. ¿Qué hacemos?",
+      "audio": "assets/audio/juegos.mp3",
       "opciones": [
         {
           "text": "Cada quien juega lo que quiere",
           "icono": "⚽",
           "next": "mapa",
           "feedback": "¡Muy bien! Ningún juego tiene dueño. Si alguien no te deja jugar, cuéntaselo a una persona adulta de confianza.",
+          "audio": "assets/audio/juegos_op1.mp3",
+          "audio_fb": "assets/audio/juegos_op1_fb.mp3",
           "badge": "estrella"
         },
         {
@@ -17,6 +20,8 @@
           "icono": "🚫",
           "next": "juegos",
           "feedback": "Mmm... Sofi y Leo se sienten tristes. Los juegos son para todas y todos. ¡Intenta otra vez!",
+          "audio": "assets/audio/juegos_op2.mp3",
+          "audio_fb": "assets/audio/juegos_op2_fb.mp3",
           "triste": true
         }
       ]
@@ -25,12 +30,15 @@
       "fondo": "salon",
       "text": "En el salón alguien dice: «Los niños no lloran» y «Las niñas no son fuertes». ¿Qué le decimos?",
       "voz": "En el salón alguien dice: los niños no lloran, y las niñas no son fuertes. ¿Qué le decimos?",
+      "audio": "assets/audio/frases.mp3",
       "opciones": [
         {
           "text": "Todas y todos podemos llorar y ser fuertes",
           "icono": "💛",
           "next": "mapa",
           "feedback": "¡Qué bonito! Tus palabras cuidan. Si algo te hace sentir mal, platícalo con una persona adulta de confianza.",
+          "audio": "assets/audio/frases_op1.mp3",
+          "audio_fb": "assets/audio/frases_op1_fb.mp3",
           "badge": "estrella"
         },
         {
@@ -38,6 +46,8 @@
           "icono": "🤐",
           "next": "frases",
           "feedback": "Mmm... esas palabras pueden lastimar. Sentir tristeza o fuerza es de todas y todos. ¡Intenta otra vez!",
+          "audio": "assets/audio/frases_op2.mp3",
+          "audio_fb": "assets/audio/frases_op2_fb.mp3",
           "triste": true
         }
       ]
@@ -46,18 +56,23 @@
       "fondo": "salon",
       "text": "¿Quién puede ser bombero o bombera y apagar fuegos?",
       "voz": "¿Quién puede ser bombero o bombera y apagar fuegos?",
+      "audio": "assets/audio/oficio_bombero.mp3",
       "opciones": [
         {
           "text": "Una niña",
           "icono": "👧",
           "next": "oficio_doctora",
-          "feedback": "¡Puede ser cualquiera! Una niña puede ser bombera. 🚒"
+          "feedback": "¡Puede ser cualquiera! Una niña puede ser bombera. 🚒",
+          "audio": "assets/audio/una_nina.mp3",
+          "audio_fb": "assets/audio/oficio_bombero_op1_fb.mp3"
         },
         {
           "text": "Un niño",
           "icono": "👦",
           "next": "oficio_doctora",
-          "feedback": "¡Puede ser cualquiera! Un niño puede ser bombero. 🚒"
+          "feedback": "¡Puede ser cualquiera! Un niño puede ser bombero. 🚒",
+          "audio": "assets/audio/un_nino.mp3",
+          "audio_fb": "assets/audio/oficio_bombero_op2_fb.mp3"
         }
       ]
     },
@@ -65,18 +80,23 @@
       "fondo": "salon",
       "text": "¿Quién puede ser doctora o doctor y cuidar a las personas?",
       "voz": "¿Quién puede ser doctora o doctor y cuidar a las personas?",
+      "audio": "assets/audio/oficio_doctora.mp3",
       "opciones": [
         {
           "text": "Una niña",
           "icono": "👧",
           "next": "oficio_cocinero",
-          "feedback": "¡Puede ser cualquiera! Una niña puede ser doctora. 🩺"
+          "feedback": "¡Puede ser cualquiera! Una niña puede ser doctora. 🩺",
+          "audio": "assets/audio/una_nina.mp3",
+          "audio_fb": "assets/audio/oficio_doctora_op1_fb.mp3"
         },
         {
           "text": "Un niño",
           "icono": "👦",
           "next": "oficio_cocinero",
-          "feedback": "¡Puede ser cualquiera! Un niño puede ser doctor. 🩺"
+          "feedback": "¡Puede ser cualquiera! Un niño puede ser doctor. 🩺",
+          "audio": "assets/audio/un_nino.mp3",
+          "audio_fb": "assets/audio/oficio_doctora_op2_fb.mp3"
         }
       ]
     },
@@ -84,18 +104,23 @@
       "fondo": "salon",
       "text": "¿Quién puede ser cocinero o cocinera y preparar comida rica?",
       "voz": "¿Quién puede ser cocinero o cocinera y preparar comida rica?",
+      "audio": "assets/audio/oficio_cocinero.mp3",
       "opciones": [
         {
           "text": "Una niña",
           "icono": "👧",
           "next": "oficio_piloto",
-          "feedback": "¡Puede ser cualquiera! Una niña puede ser cocinera. 🍳"
+          "feedback": "¡Puede ser cualquiera! Una niña puede ser cocinera. 🍳",
+          "audio": "assets/audio/una_nina.mp3",
+          "audio_fb": "assets/audio/oficio_cocinero_op1_fb.mp3"
         },
         {
           "text": "Un niño",
           "icono": "👦",
           "next": "oficio_piloto",
-          "feedback": "¡Puede ser cualquiera! Un niño puede ser cocinero. 🍳"
+          "feedback": "¡Puede ser cualquiera! Un niño puede ser cocinero. 🍳",
+          "audio": "assets/audio/un_nino.mp3",
+          "audio_fb": "assets/audio/oficio_cocinero_op2_fb.mp3"
         }
       ]
     },
@@ -103,12 +128,15 @@
       "fondo": "salon",
       "text": "¿Quién puede ser piloto o pilota y volar un avión?",
       "voz": "¿Quién puede ser piloto, o pilota, y volar un avión?",
+      "audio": "assets/audio/oficio_piloto.mp3",
       "opciones": [
         {
           "text": "Una niña",
           "icono": "👧",
           "next": "mapa",
           "feedback": "¡Puede ser cualquiera! Ningún oficio tiene dueño. Si alguien dice que no puedes, cuéntaselo a una persona adulta de confianza. ✈️",
+          "audio": "assets/audio/una_nina.mp3",
+          "audio_fb": "assets/audio/oficio_piloto_fb.mp3",
           "badge": "estrella"
         },
         {
@@ -116,6 +144,8 @@
           "icono": "👦",
           "next": "mapa",
           "feedback": "¡Puede ser cualquiera! Ningún oficio tiene dueño. Si alguien dice que no puedes, cuéntaselo a una persona adulta de confianza. ✈️",
+          "audio": "assets/audio/un_nino.mp3",
+          "audio_fb": "assets/audio/oficio_piloto_fb.mp3",
           "badge": "estrella"
         }
       ]
@@ -124,12 +154,15 @@
       "fondo": "celular",
       "text": "En un juego en línea, alguien escribe: «Las niñas no saben jugar». Luego un desconocido pregunta: «¿Dónde vives?».",
       "voz": "En un juego en línea, alguien escribe: las niñas no saben jugar. Luego un desconocido pregunta: ¿dónde vives? ¿Qué hacemos?",
+      "audio": "assets/audio/chat.mp3",
       "opciones": [
         {
           "text": "Bloquear y avisar a un adulto",
           "icono": "🛡️",
           "next": "mapa",
           "feedback": "¡Excelente! Bloquear y avisar a una persona adulta de confianza te cuida. Nunca digas dónde vives.",
+          "audio": "assets/audio/chat_op1.mp3",
+          "audio_fb": "assets/audio/chat_op1_fb.mp3",
           "badge": "estrella"
         },
         {
@@ -137,6 +170,8 @@
           "icono": "📍",
           "next": "chat",
           "feedback": "Uy... a desconocidos no les contamos dónde vivimos. Mejor bloquea y avisa a una persona adulta de confianza. ¡Intenta otra vez!",
+          "audio": "assets/audio/chat_op2.mp3",
+          "audio_fb": "assets/audio/chat_op2_fb.mp3",
           "triste": true
         }
       ]
@@ -144,6 +179,7 @@
     "fin": {
       "text": "¡Ningún juego, color ni oficio tiene dueño! ¡Todas y todos podemos! Y si algo te preocupa, platícalo con una persona adulta de confianza.",
       "voz": "Ningún juego, color ni oficio tiene dueño. ¡Todas y todos podemos! Y si algo te preocupa, platícalo con una persona adulta de confianza.",
+      "audio": "assets/audio/fin.mp3",
       "preguntas": [
         "¿Hay juegos o colores solo para niñas o solo para niños? ¿Por qué?",
         "Si alguien dice «los niños no lloran», ¿qué le podemos contestar?",

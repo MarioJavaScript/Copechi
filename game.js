@@ -5,12 +5,15 @@
   const hayVoz = 'speechSynthesis' in window;
   const avatar = { piel: 0, pelo: 0, ropa: 0 };
   const TOTAL = { piel: ARTE.N_PIEL, pelo: ARTE.N_PELO, ropa: ARTE.N_ROPA };
+  const AUDIO_INICIO = 'assets/audio/inicio.mp3';
   let datos = null;
   let mapasDatos = null;
   const completadas = new Set();
   let episodio = null;    // escena (NPC) que se está jugando
   let estrellas = 0;
-  let ultimaVoz = '';
+  let ultimo = { texto: '', src: '' };   // lo último que sonó (lo repite la bocina)
+  let sonando = null;                    // Audio en curso
+  const precargados = [];
   let voz = null;
   let preguntas = [];
 
@@ -69,16 +72,45 @@
     elegirVoz();
     speechSynthesis.onvoiceschanged = elegirVoz;
   }
-  function hablar(texto) {
-    ultimaVoz = texto;
-    if (!hayVoz || !texto) return;
+  // Voz del navegador (fallback cuando no hay mp3 o falla).
+  function sintetizar(texto, alTerminar) {
+    if (!hayVoz || !texto) { if (alTerminar) alTerminar(); return; }
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(texto);
     u.lang = voz ? voz.lang : 'es-MX';
     if (voz) u.voice = voz;
     u.rate = 0.9;
     u.pitch = 1.3;
+    if (alTerminar) u.onend = alTerminar;
     speechSynthesis.speak(u);
+  }
+  function detener() {
+    if (sonando) { sonando.onended = sonando.onerror = null; sonando.pause(); sonando = null; }
+    if (hayVoz) speechSynthesis.cancel();
+  }
+  // Reproduce el mp3 `src`; si no existe o falla, lee `texto` con la voz del navegador.
+  function hablar(texto, src, alTerminar, recordar = true) {
+    if (recordar) ultimo = { texto, src, alTerminar };
+    detener();
+    if (!src) return sintetizar(texto, alTerminar);
+    const a = new Audio(src);
+    sonando = a;
+    const falla = () => { if (sonando !== a) return; sonando = null; sintetizar(texto, alTerminar); };
+    a.onerror = falla;
+    a.onended = () => { if (sonando === a) { sonando = null; if (alTerminar) alTerminar(); } };
+    const p = a.play();
+    if (p && p.catch) p.catch(falla);
+  }
+  const repetir = () => hablar(ultimo.texto, ultimo.src, ultimo.alTerminar);
+
+  // Junta todas las rutas de audio de scenes.json y las va bajando en segundo plano.
+  function precargar() {
+    const rutas = new Set();
+    Object.values(datos.escenas).forEach((e) => {
+      if (e.audio) rutas.add(e.audio);
+      (e.opciones || []).forEach((o) => { if (o.audio) rutas.add(o.audio); if (o.audio_fb) rutas.add(o.audio_fb); });
+    });
+    rutas.forEach((r) => { const a = new Audio(); a.preload = 'auto'; a.src = r; precargados.push(a); });
   }
 
   // ---- Avatar ----
@@ -152,7 +184,12 @@
       cont.append(b);
     });
     textoEscena.poner(esc.text);
-    hablar(esc.voz || esc.text);
+    // Tras la pregunta se leen las opciones en orden (sin cambiar lo que repite la bocina).
+    const leerOpciones = (i = 0) => {
+      const op = esc.opciones[i];
+      if (op && op.audio) hablar(op.text, op.audio, () => leerOpciones(i + 1), false);
+    };
+    hablar(esc.voz || esc.text, esc.audio, () => leerOpciones());
   }
 
   const CHISPAS_FB = [[8, 12], [84, 8], [2, 52], [92, 48], [20, 80], [74, 78]];
@@ -175,7 +212,7 @@
     btn.querySelector('span').textContent = op.triste ? 'Intentar otra vez' : 'Seguir';
     btn.onclick = () => { if (op.next === 'mapa') cerrarEpisodio(); else irA(op.next); };
     textoFeedback.poner(op.feedback);
-    hablar(op.feedback);
+    hablar(op.feedback, op.audio_fb);
   }
 
   // Abre la escena de un NPC encima del mapa.
@@ -210,7 +247,7 @@
       cont.append(c);
     }
     mostrar('final');
-    hablar(esc.voz || esc.text);
+    hablar(esc.voz || esc.text, esc.audio);
   }
 
   async function cargar() {
@@ -231,9 +268,10 @@
       speechSynthesis.speak(u);
     }
     if (!(await cargar())) return;
+    precargar();
     pintarAvatares();
     mostrar('avatar');
-    hablar('¡Crea tu personaje! Toca las flechas.');
+    hablar('', AUDIO_INICIO, () => hablar('¡Crea tu personaje! Toca las flechas.'));
   });
   $('btn-listo').addEventListener('click', () => {
     estrellas = 0;
@@ -242,10 +280,10 @@
     MAPA.abrir(mapasDatos.inicio);
     hablar('¡Toca el mapa para caminar! Busca la flecha amarilla.');
   });
-  $('btn-voz').addEventListener('click', () => hablar(ultimaVoz));
-  $('btn-voz-final').addEventListener('click', () => hablar(ultimaVoz));
+  $('btn-voz').addEventListener('click', () => repetir());
+  $('btn-voz-final').addEventListener('click', () => repetir());
   $('btn-debate').addEventListener('click', () => { mostrar('debate'); hablar(preguntas.join(' ')); });
-  $('btn-voz-debate').addEventListener('click', () => hablar(ultimaVoz));
+  $('btn-voz-debate').addEventListener('click', () => repetir());
   $('btn-reiniciar').addEventListener('click', () => { mostrar('avatar'); hablar('¡Crea tu personaje! Toca las flechas.'); });
 
   ['ico-bocina', 'ico-bocina-final', 'ico-bocina-debate'].forEach((id) => ARTE.pintarIcono($(id), 'bocina'));
