@@ -170,10 +170,26 @@
     },
     E: { fondo: 's', filas: { 0: 'YYYYYYYY', 7: '...YYYYY', 8: '...YYYYY', 15: 'YYYYYYYY' } },
   };
+  // Interior (salón): piso de madera, pared de ladrillo y pupitres. Lo demás se hereda de TILES.
+  const TILES_INT = {
+    '.': { fondo: 's', filas: { 7: 'YYYYYYYY', 15: 'YYYYYYYY' } },
+    '#': {
+      fondo: 'o',
+      filas: {
+        0: 'kkkkkkkk', 1: '......k.', 2: '......k.', 3: '......k.', 4: '......k.', 5: '......k.', 6: '......k.', 7: '......k.',
+        8: 'kkkkkkkk', 9: '..k.....', 10: '..k.....', 11: '..k.....', 12: '..k.....', 13: '..k.....', 14: '..k.....', 15: '..k.....',
+      },
+    },
+    B: {
+      fondo: 's',
+      filas: { 4: '.kkkkkkk', 5: '.kYYYYYY', 6: '.kYYYYYY', 7: '.kkkkkkk', 8: '.ko.....', 9: '.ko.....', 10: 'kkk.....' },
+    },
+  };
   const tilesCache = {};
-  function tile(clave) {
-    const def = TILES[clave] || TILES['.'];
-    const k = TILES[clave] ? clave : '.';
+  function tile(clave, estilo) {
+    const interior = estilo === 'interior';
+    const def = (interior && TILES_INT[clave]) || TILES[clave] || TILES['.'];
+    const k = (interior && TILES_INT[clave] ? 'i' : '') + ((interior && TILES_INT[clave]) || TILES[clave] ? clave : '.');
     if (!tilesCache[k]) {
       const c = document.createElement('canvas');
       c.width = c.height = 16;
@@ -191,10 +207,10 @@
     0: '.......k', 1: '......kY', 2: '.....kYY', 3: 'kkkkkYYY', 4: '.kYYwYYY', 5: '..kYYYYY',
     6: '...kYYYY', 7: '....kYYY', 8: '...kYYYY', 9: '..kYYkkk', 10: '..kYk...', 11: '.kYk....', 12: '.kk.....',
   };
-  function pintarEstrella(canvas) {
+  function pintarEstrella(canvas, vacia) {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, 16, 16);
-    capaEspejo(ctx, 16, ESTRELLA);
+    capaEspejo(ctx, 16, ESTRELLA, vacia ? { Y: 's', w: 's' } : null);
   }
 
   // ---------- Fondos (72x40) ----------
@@ -255,7 +271,7 @@
   }
 
   window.ARTE = {
-    PALETA, COP, AV, ESTRELLA, TILES, NPCS, FONDOS: Object.keys(FONDOS),
+    PALETA, COP, AV, ESTRELLA, TILES, TILES_INT, NPCS, FONDOS: Object.keys(FONDOS),
     N_PIEL: PIEL.length, N_PELO: PELO.length, N_ROPA: ROPA.length,
     tile, pintarCopechi, pintarAvatar, pintarEstrella, pintarFondo, repintarCopechis, animar,
     get frame() { return frame; },

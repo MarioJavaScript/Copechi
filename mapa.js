@@ -1,19 +1,22 @@
-// Motor de mapas: cuadrícula de tiles 16x16, camino por BFS, toques y flechas.
+// Motor de mapas: cuadrícula de tiles 16x16, camino por BFS, NPC, salidas con fundido y progreso.
 (() => {
-  const T = 16, COLS = 11, FILAS = 14, PASO_MS = 150;
+  const T = 16, COLS = 11, FILAS = 14, PASO_MS = 150, FUNDIDO_MS = 300;
   const SOLIDOS = new Set(['#', 'T', 'B']);
   const DIRS = { arriba: [0, -1], abajo: [0, 1], izquierda: [-1, 0], derecha: [1, 0] };
   const $ = (id) => document.getElementById(id);
 
   let canvas, ctx, fondo;
-  let mapas = {}, mapa = null, avatar = null;
+  let mapas = {}, listaMapas = [], mapa = null, avatar = null;
+  let completadas = new Set(), alHablar = () => {};
   let sprites = {}, sprNpc = {};
-  let ruta = [], destino = null, sostenida = null, alterna = false, activo = false;
+  let ruta = [], destino = null, hablarCon = null, sostenida = null;
+  let alterna = false, activo = false, corriendo = false, enTransicion = false;
   const jug = { x: 0, y: 0, dir: 'abajo', mov: null };
 
   const celda = (x, y) => (mapa.grid[y] && mapa.grid[y][x]) || '#';
   const npcEn = (x, y) => mapa.npcs.find((n) => n.x === x && n.y === y);
   const libre = (x, y) => !SOLIDOS.has(celda(x, y)) && !npcEn(x, y);
+  const pendiente = (n) => !completadas.has(n.escena);
 
   // Búsqueda en anchura: devuelve los pasos desde `a` hasta `b` (sin incluir a), o null.
   function bfs(a, b) {
@@ -32,6 +35,33 @@
         const k = n.x + ',' + n.y;
         if (!previo.has(k) && libre(n.x, n.y)) { previo.set(k, c); cola.push(n); }
       }
+    }
+    return null;
+  }
+
+  // Camino más corto hasta quedar al lado de un NPC (vacío si ya está al lado).
+  function caminoAVecino(ini, npc) {
+    if (Math.abs(ini.x - npc.x) + Math.abs(ini.y - npc.y) === 1) return [];
+    let mejor = null;
+    for (const [dx, dy] of Object.values(DIRS)) {
+      const c = bfs(ini, { x: npc.x + dx, y: npc.y + dy });
+      if (c && c.length && (!mejor || c.length < mejor.length)) mejor = c;
+    }
+    return mejor;
+  }
+
+  // A dónde apunta la flecha guía: el siguiente NPC pendiente de este mapa, o la salida que lleva a otro mapa con pendientes.
+  function meta() {
+    const n = mapa.npcs.find(pendiente);
+    if (n) return { x: n.x, y: n.y };
+    const vistos = new Set([mapa.id]);
+    const cola = mapa.exits.map((e) => ({ e, id: e.a }));
+    while (cola.length) {
+      const { e, id } = cola.shift();
+      if (vistos.has(id)) continue;
+      vistos.add(id);
+      if (mapas[id].npcs.some(pendiente)) return { x: e.x, y: e.y };
+      mapas[id].exits.forEach((x) => cola.push({ e, id: x.a }));
     }
     return null;
   }
@@ -63,21 +93,34 @@
     for (let y = 0; y < FILAS; y++) {
       for (let x = 0; x < COLS; x++) {
         let ch = celda(x, y);
-        if (ch === '.' && (x * 31 + y * 17) % 7 === 0) ch = 'f';
-        f.drawImage(ARTE.tile(ch), x * T, y * T);
+        if (ch === '.' && mapa.estilo !== 'interior' && (x * 31 + y * 17) % 7 === 0) ch = 'f';
+        f.drawImage(ARTE.tile(ch, mapa.estilo), x * T, y * T);
       }
     }
   }
 
-  function entrar(id, spawn) {
+  // Una estrella por cada escena (episodio) del juego: llena si ya se completó.
+  function pintarProgreso() {
+    const escenas = [...new Set(listaMapas.flatMap((m) => m.npcs.map((n) => n.escena)))];
+    $('mapa-estrellas').replaceChildren(...escenas.map((id) => {
+      const c = document.createElement('canvas');
+      c.width = c.height = 16;
+      ARTE.pintarEstrella(c, !completadas.has(id));
+      return c;
+    }));
+  }
+
+  function entrar(id, spawn, dir) {
     mapa = mapas[id];
     const s = spawn || mapa.spawn;
-    Object.assign(jug, { x: s.x, y: s.y, dir: 'abajo', mov: null });
+    Object.assign(jug, { x: s.x, y: s.y, dir: dir || 'abajo', mov: null });
     ruta = [];
     destino = null;
+    hablarCon = null;
     $('mapa-nombre').textContent = mapa.nombre;
     pintarFondo();
     prepararSprites();
+    pintarProgreso();
     ajustar();
   }
 
@@ -95,14 +138,26 @@
 
   function tocarMapa(ev) {
     ev.preventDefault();
-    if (!activo) return;
+    if (!activo || enTransicion) return;
     const r = canvas.getBoundingClientRect();
     const tx = Math.floor(((ev.clientX - r.left) / r.width) * COLS);
     const ty = Math.floor(((ev.clientY - r.top) / r.height) * FILAS);
     const ini = jug.mov ? { x: jug.mov.x1, y: jug.mov.y1 } : { x: jug.x, y: jug.y };
+    const npc = npcEn(tx, ty);
+    if (npc) {
+      if (!pendiente(npc)) return;
+      const camino = caminoAVecino(ini, npc);
+      if (!camino) return;
+      sostenida = null;
+      ruta = camino;
+      destino = camino.length ? camino[camino.length - 1] : null;
+      hablarCon = npc;
+      return;
+    }
     const camino = bfs(ini, { x: tx, y: ty });
     if (!camino || !camino.length) return;
     sostenida = null;
+    hablarCon = null;
     ruta = camino;
     destino = { x: tx, y: ty };
   }
@@ -114,24 +169,69 @@
     alterna = !alterna;
   }
 
+  // Salida en el borde: fundido a negro, cambio de mapa en su spawn y fundido de vuelta.
+  function transicion(ex) {
+    enTransicion = true;
+    ruta = [];
+    destino = null;
+    hablarCon = null;
+    sostenida = null;
+    const f = $('fundido');
+    f.classList.add('negro');
+    setTimeout(() => {
+      entrar(ex.a, { x: ex.spawn_x, y: ex.spawn_y }, jug.dir);
+      f.classList.remove('negro');
+      setTimeout(() => { enTransicion = false; }, FUNDIDO_MS);
+    }, FUNDIDO_MS);
+  }
+
   function actualizar(ahora) {
+    if (enTransicion) return;
     if (jug.mov) {
       if (ahora - jug.mov.t0 < PASO_MS) return;
       jug.x = jug.mov.x1;
       jug.y = jug.mov.y1;
       jug.mov = null;
+      const ex = mapa.exits.find((e) => e.x === jug.x && e.y === jug.y);
+      if (ex) return transicion(ex);
     }
     if (sostenida) {
       const [dx, dy] = DIRS[sostenida];
       ruta = [];
       destino = null;
+      hablarCon = null;
       jug.dir = sostenida;
       if (libre(jug.x + dx, jug.y + dy)) empezarPaso(jug.x + dx, jug.y + dy, ahora);
     } else if (ruta.length) {
       const n = ruta.shift();
       if (libre(n.x, n.y)) empezarPaso(n.x, n.y, ahora);
-      else { ruta = []; destino = null; }
-    } else destino = null;
+      else { ruta = []; destino = null; hablarCon = null; }
+    } else {
+      destino = null;
+      if (hablarCon) {
+        const n = hablarCon;
+        hablarCon = null;
+        if (Math.abs(jug.x - n.x) + Math.abs(jug.y - n.y) === 1) {
+          jug.dir = n.x < jug.x ? 'izquierda' : n.x > jug.x ? 'derecha' : n.y < jug.y ? 'arriba' : 'abajo';
+          dibujar(ahora);
+          alHablar(n);
+        }
+      }
+    }
+  }
+
+  // Flecha amarilla que rebota sobre la meta (siguiente NPC o salida).
+  function flecha(m, ahora) {
+    const cx = m.x * T + 8;
+    let y = Math.max(1, m.y * T - 8) + Math.floor(ahora / 250) % 2 * 2;
+    const tri = (color, ancho, alto, dy) => {
+      ctx.fillStyle = ARTE.PALETA[color];
+      for (let i = 0; i < alto; i++) ctx.fillRect(cx - (ancho - 2 * i - 1) / 2, y + dy + i, ancho - 2 * i, 1);
+    };
+    tri('k', 9, 5, 0);
+    ctx.fillStyle = ARTE.PALETA.k;
+    ctx.fillRect(cx - 3, y - 1, 7, 1);
+    tri('Y', 7, 4, 0);
   }
 
   function dibujar(ahora) {
@@ -151,25 +251,34 @@
     const cosas = mapa.npcs.map((n) => ({ c: sprNpc[n.id], x: n.x * T, y: n.y * T }));
     cosas.push({ c: sprites[jug.dir][jug.mov ? (alterna ? 1 : 2) : 0], x: px, y: py });
     cosas.sort((a, b) => a.y - b.y).forEach((o) => ctx.drawImage(o.c, o.x, o.y));
+    const m = meta();
+    if (m) flecha(m, ahora);
   }
 
   function bucle(ahora) {
-    if (!activo) return;
+    if (!activo) { corriendo = false; return; }
     actualizar(ahora);
-    dibujar(ahora);
+    if (activo) dibujar(ahora);
     requestAnimationFrame(bucle);
   }
+  function arrancar() {
+    activo = true;
+    if (!corriendo) { corriendo = true; requestAnimationFrame(bucle); }
+  }
 
-  function iniciar(datos, av) {
+  function iniciar(datos, av, opciones) {
+    listaMapas = datos.mapas;
     mapas = Object.fromEntries(datos.mapas.map((m) => [m.id, m]));
     avatar = av;
+    completadas = opciones.completadas;
+    alHablar = opciones.alHablar;
     canvas = $('mapa-canvas');
     ctx = canvas.getContext('2d');
     canvas.addEventListener('pointerdown', tocarMapa);
     canvas.addEventListener('contextmenu', (e) => e.preventDefault());
     document.querySelectorAll('#controles .btn').forEach((b) => {
       const soltar = () => { if (sostenida === b.dataset.dir) sostenida = null; };
-      b.addEventListener('pointerdown', (e) => { e.preventDefault(); sostenida = b.dataset.dir; });
+      b.addEventListener('pointerdown', (e) => { e.preventDefault(); if (!enTransicion) sostenida = b.dataset.dir; });
       ['pointerup', 'pointercancel', 'pointerleave'].forEach((t) => b.addEventListener(t, soltar));
       b.addEventListener('contextmenu', (e) => e.preventDefault());
     });
@@ -181,14 +290,10 @@
 
   window.MAPA = {
     iniciar,
-    abrir(id) {
-      const yaCorre = activo;
-      activo = true;
-      entrar(id);
-      if (!yaCorre) requestAnimationFrame(bucle);
-    },
-    pausar() { activo = false; sostenida = null; },
+    abrir(id) { entrar(id); arrancar(); },      // mapa nuevo en su spawn
+    reanudar() { pintarProgreso(); ajustar(); arrancar(); }, // vuelve al mapa donde estaba
+    pausar() { activo = false; sostenida = null; ruta = []; destino = null; },
     ajustar,
-    get jugador() { return { x: jug.x, y: jug.y, dir: jug.dir, mov: !!jug.mov }; },
+    get jugador() { return { x: jug.x, y: jug.y, dir: jug.dir, mov: !!jug.mov, mapa: mapa && mapa.id }; },
   };
 })();

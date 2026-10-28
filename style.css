@@ -75,3 +75,8 @@ h2 { font-size: 18px; margin: 0; color: #9a4414; }
 .controles { display: flex; gap: 24px; justify-content: center; flex: none; }
 .controles.oculto { display: none; }
 #mapa .btn { width: 64px; height: 64px; padding: 0; font-size: 28px; touch-action: none; }
+.mapa-nombre { flex: none; }
+.mapa-estrellas { flex: 1; display: flex; gap: 4px; justify-content: center; }
+.mapa-estrellas canvas { width: 24px; height: 24px; }
+.fundido { position: absolute; inset: 0; z-index: 5; background: #3b2210; opacity: 0; pointer-events: none; transition: opacity .3s linear; }
+.fundido.negro { opacity: 1; }

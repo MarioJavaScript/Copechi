@@ -1,11 +1,13 @@
 {
   "inicio": "patio",
+  "final": "fin",
   "mapas": [
     {
       "id": "patio",
       "nombre": "Patio",
+      "estilo": "exterior",
       "grid": [
-        "###########",
+        "#####E#####",
         "#.........#",
         "#.T.....T.#",
         "#.........#",
@@ -21,10 +23,42 @@
         "###########"
       ],
       "npcs": [
-        { "id": "sofi", "x": 5, "y": 4, "sprite": "sofi", "escena": "juegos" }
+        { "id": "sofi", "x": 5, "y": 4, "sprite": "sofi", "escena": "juegos" },
+        { "id": "leo", "x": 8, "y": 9, "sprite": "leo", "escena": "chat" }
       ],
-      "exits": [],
+      "exits": [
+        { "x": 5, "y": 0, "a": "salon", "spawn_x": 5, "spawn_y": 12 }
+      ],
       "spawn": { "x": 5, "y": 11 }
+    },
+    {
+      "id": "salon",
+      "nombre": "Salón",
+      "estilo": "interior",
+      "grid": [
+        "###########",
+        "#.........#",
+        "#.B.B.B.B.#",
+        "#.........#",
+        "#.........#",
+        "#.B.B.B.B.#",
+        "#.........#",
+        "#.........#",
+        "#.B.B.B.B.#",
+        "#.........#",
+        "#.........#",
+        "#.........#",
+        "#.........#",
+        "#####E#####"
+      ],
+      "npcs": [
+        { "id": "maestra", "x": 5, "y": 3, "sprite": "maestra", "escena": "frases" },
+        { "id": "amigo", "x": 7, "y": 10, "sprite": "amigo", "escena": "oficio_bombero" }
+      ],
+      "exits": [
+        { "x": 5, "y": 13, "a": "patio", "spawn_x": 5, "spawn_y": 1 }
+      ],
+      "spawn": { "x": 5, "y": 12 }
     }
   ]
 }

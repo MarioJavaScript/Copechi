@@ -1,5 +1,4 @@
 {
-  "inicio": "juegos",
   "escenas": {
     "juegos": {
       "fondo": "patio",
@@ -9,7 +8,7 @@
         {
           "text": "Cada quien juega lo que quiere",
           "icono": "⚽",
-          "next": "frases",
+          "next": "mapa",
           "feedback": "¡Muy bien! Ningún juego tiene dueño. Si alguien no te deja jugar, cuéntaselo a una persona adulta de confianza.",
           "badge": "estrella"
         },
@@ -30,7 +29,7 @@
         {
           "text": "Todas y todos podemos llorar y ser fuertes",
           "icono": "💛",
-          "next": "oficio_bombero",
+          "next": "mapa",
           "feedback": "¡Qué bonito! Tus palabras cuidan. Si algo te hace sentir mal, platícalo con una persona adulta de confianza.",
           "badge": "estrella"
         },
@@ -108,14 +107,14 @@
         {
           "text": "Una niña",
           "icono": "👧",
-          "next": "chat",
+          "next": "mapa",
           "feedback": "¡Puede ser cualquiera! Ningún oficio tiene dueño. Si alguien dice que no puedes, cuéntaselo a una persona adulta de confianza. ✈️",
           "badge": "estrella"
         },
         {
           "text": "Un niño",
           "icono": "👦",
-          "next": "chat",
+          "next": "mapa",
           "feedback": "¡Puede ser cualquiera! Ningún oficio tiene dueño. Si alguien dice que no puedes, cuéntaselo a una persona adulta de confianza. ✈️",
           "badge": "estrella"
         }
@@ -129,14 +128,14 @@
         {
           "text": "Bloquear y avisar a un adulto",
           "icono": "🛡️",
-          "next": "fin",
+          "next": "mapa",
           "feedback": "¡Excelente! Bloquear y avisar a una persona adulta de confianza te cuida. Nunca digas dónde vives.",
           "badge": "estrella"
         },
         {
           "text": "Contestar dónde vivo",
           "icono": "📍",
-          "next": "chat",
+          "next": "mapa",
           "feedback": "Uy... a desconocidos no les contamos dónde vivimos. Mejor bloquea y avisa a una persona adulta de confianza. ¡Intenta otra vez!",
           "triste": true
         }

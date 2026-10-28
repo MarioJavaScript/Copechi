@@ -18,7 +18,10 @@ const ids = Object.keys(escenas);
 const vacio = (s) => typeof s !== 'string' || s.trim() === '';
 
 if (!ids.length) err('No hay escenas.');
-if (vacio(datos.inicio) || !escenas[datos.inicio]) err(`"inicio" apunta a una escena inexistente: ${datos.inicio}`);
+let mp = { mapas: [] };
+try { mp = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'maps.json'), 'utf8')); }
+catch (e) { err('No se pudo leer data/maps.json: ' + e.message); }
+if (!escenas[mp.final] || !escenas[mp.final].final) err('maps.json: "final" debe ser una escena con "final": true.');
 
 for (const id of ids) {
   const e = escenas[id];
@@ -39,13 +42,12 @@ for (const id of ids) {
     if (vacio(o.icono)) err(`${w}: falta "icono".`);
     if (vacio(o.feedback)) err(`${w}: falta "feedback".`);
     if (vacio(o.next)) err(`${w}: falta "next".`);
-    else if (!escenas[o.next]) err(`${w}: "next" apunta a una escena inexistente (${o.next}).`);
+    else if (o.next !== 'mapa' && !escenas[o.next]) err(`${w}: "next" apunta a una escena inexistente (${o.next}).`);
   });
 }
 
 // Mapas (validación básica de 6A; la completa llega en 6C)
 try {
-  const mp = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'maps.json'), 'utf8'));
   const SOL = '#TB';
   for (const m of mp.mapas || []) {
     if (m.grid.length !== 14 || m.grid.some((f) => f.length !== 11)) err(`[mapa ${m.id}] la cuadrícula debe ser de 11 columnas x 14 filas.`);
@@ -73,7 +75,7 @@ try {
   [['alasA', A.COP.alasA], ['alasB', A.COP.alasB], ['cuerpo', A.COP.cuerpo], ...Object.entries(A.COP.cara).map(([k, v]) => ['cara.' + k, v])]
     .forEach(([n, f]) => mitad('Copechi ' + n, f, 16, 32));
   mitad('avatar cara', A.AV.cara, 8, 16); mitad('avatar caraLado', A.AV.caraLado, 16, 16);
-  for (const [t, d] of Object.entries(A.TILES)) mitad('tile ' + t, d.filas, 8, 16);
+  for (const [t, d] of [...Object.entries(A.TILES), ...Object.entries(A.TILES_INT).map(([t, d]) => ['int ' + t, d])]) mitad('tile ' + t, d.filas, 8, 16);
   mitad('estrella', A.ESTRELLA, 8, 16); mitad('avatar base', A.AV.base, 8, 16);
   for (const [k, f] of Object.entries(A.AV.pelo)) mitad('pelo ' + k, f, 8, 16);
   for (const [k, f] of Object.entries(A.AV.ropa)) mitad('ropa ' + k, f, 8, 16);
@@ -81,19 +83,19 @@ try {
   if (usados.size > 16) err('La paleta tiene más de 16 colores.');
 } catch (e) { err('arte.js no carga: ' + e.message); }
 
-// Alcanzables desde el inicio
+// Alcanzables: desde los NPC (y la escena final del juego)
 const vistas = new Set();
-const pila = escenas[datos.inicio] ? [datos.inicio] : [];
+const pila = [mp.final, ...(mp.mapas || []).flatMap((m) => m.npcs.map((n) => n.escena))].filter((id) => escenas[id]);
 while (pila.length) {
   const id = pila.pop();
   if (vistas.has(id)) continue;
   vistas.add(id);
   for (const o of escenas[id].opciones || []) if (escenas[o.next]) pila.push(o.next);
 }
-for (const id of ids) if (!vistas.has(id)) err(`[${id}] es inalcanzable desde "${datos.inicio}".`);
+for (const id of ids) if (!vistas.has(id)) err(`[${id}] es inalcanzable: ningún NPC la dispara.`);
 
 // Escenas que llegan a un final (recorrido inverso desde los finales)
-const llegan = new Set(ids.filter((id) => escenas[id].final));
+const llegan = new Set(ids.filter((id) => escenas[id].final || (escenas[id].opciones || []).some((o) => o.next === 'mapa')));
 let cambio = true;
 while (cambio) {
   cambio = false;
@@ -109,4 +111,4 @@ if (errores.length) {
   console.error(`✗ check.js: ${errores.length} problema(s)\n` + errores.map((m) => '  - ' + m).join('\n'));
   process.exit(1);
 }
-console.log(`✓ check.js: ${ids.length} escenas OK (inicio: ${datos.inicio}).`);
+console.log(`✓ check.js: ${ids.length} escenas OK.`);
