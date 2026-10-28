@@ -1,6 +1,6 @@
 // Service worker: guarda el juego para que funcione sin internet tras la primera carga.
-const CACHE = 'copechi-v1';
-const ARCHIVOS = ['./', 'index.html', 'style.css', 'arte.js', 'game.js', 'data/scenes.json', 'guia-docente.html'];
+const CACHE = 'copechi-v2';
+const ARCHIVOS = ['./', 'index.html', 'style.css', 'arte.js', 'mapa.js', 'game.js', 'data/scenes.json', 'data/maps.json', 'guia-docente.html'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ARCHIVOS)).then(() => self.skipWaiting()));

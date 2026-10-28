@@ -24,6 +24,20 @@
     <button id="btn-listo" class="btn grande">✅ ¡Listo!</button>
   </section>
 
+  <section id="mapa" class="pantalla">
+    <div id="mapa-barra" class="mapa-barra">
+      <span id="mapa-nombre" class="mapa-nombre"></span>
+      <button id="btn-flechas" class="btn" aria-label="Mostrar u ocultar flechas">🎮</button>
+    </div>
+    <canvas id="mapa-canvas" width="176" height="224" aria-label="Mapa de la escuela"></canvas>
+    <div id="controles" class="controles">
+      <button class="btn" data-dir="izquierda" aria-label="Izquierda">◀</button>
+      <button class="btn" data-dir="arriba" aria-label="Arriba">▲</button>
+      <button class="btn" data-dir="abajo" aria-label="Abajo">▼</button>
+      <button class="btn" data-dir="derecha" aria-label="Derecha">▶</button>
+    </div>
+  </section>
+
   <section id="juego" class="pantalla">
     <div class="escena">
       <canvas id="fondo" width="72" height="40" aria-hidden="true"></canvas>
@@ -54,6 +68,7 @@
   </section>
 </main>
 <script src="arte.js"></script>
+<script src="mapa.js"></script>
 <script src="game.js"></script>
 </body>
 </html>

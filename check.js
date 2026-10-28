@@ -43,6 +43,22 @@ for (const id of ids) {
   });
 }
 
+// Mapas (validación básica de 6A; la completa llega en 6C)
+try {
+  const mp = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'maps.json'), 'utf8'));
+  const SOL = '#TB';
+  for (const m of mp.mapas || []) {
+    if (m.grid.length !== 14 || m.grid.some((f) => f.length !== 11)) err(`[mapa ${m.id}] la cuadrícula debe ser de 11 columnas x 14 filas.`);
+    const en = (x, y) => (m.grid[y] || '')[x];
+    if (!en(m.spawn.x, m.spawn.y) || SOL.includes(en(m.spawn.x, m.spawn.y))) err(`[mapa ${m.id}] el spawn está en una pared o fuera del mapa.`);
+    for (const n of m.npcs) {
+      if (!en(n.x, n.y) || SOL.includes(en(n.x, n.y))) err(`[mapa ${m.id}] el NPC ${n.id} está en una pared o fuera del mapa.`);
+      if (!escenas[n.escena]) err(`[mapa ${m.id}] el NPC ${n.id} apunta a una escena inexistente (${n.escena}).`);
+    }
+  }
+  if (!(mp.mapas || []).some((m) => m.id === mp.inicio)) err('maps.json: "inicio" apunta a un mapa inexistente.');
+} catch (e) { err('No se pudo leer data/maps.json: ' + e.message); }
+
 // Sprites: dimensiones de las matrices en arte.js (mitades de 16 u 8 columnas)
 global.window = { matchMedia: null };
 try {
@@ -56,6 +72,8 @@ try {
   };
   [['alasA', A.COP.alasA], ['alasB', A.COP.alasB], ['cuerpo', A.COP.cuerpo], ...Object.entries(A.COP.cara).map(([k, v]) => ['cara.' + k, v])]
     .forEach(([n, f]) => mitad('Copechi ' + n, f, 16, 32));
+  mitad('avatar cara', A.AV.cara, 8, 16); mitad('avatar caraLado', A.AV.caraLado, 16, 16);
+  for (const [t, d] of Object.entries(A.TILES)) mitad('tile ' + t, d.filas, 8, 16);
   mitad('estrella', A.ESTRELLA, 8, 16); mitad('avatar base', A.AV.base, 8, 16);
   for (const [k, f] of Object.entries(A.AV.pelo)) mitad('pelo ' + k, f, 8, 16);
   for (const [k, f] of Object.entries(A.AV.ropa)) mitad('ropa ' + k, f, 8, 16);

@@ -1,11 +1,12 @@
 // Motor de escenas mobile-first. Textos de escenas: solo de data/scenes.json.
 (() => {
   const $ = (id) => document.getElementById(id);
-  const pantallas = ['inicio', 'avatar', 'juego', 'final', 'debate'];
+  const pantallas = ['inicio', 'avatar', 'mapa', 'juego', 'final', 'debate'];
   const hayVoz = 'speechSynthesis' in window;
   const avatar = { piel: 0, pelo: 0, ropa: 0 };
   const TOTAL = { piel: ARTE.N_PIEL, pelo: ARTE.N_PELO, ropa: ARTE.N_ROPA };
   let datos = null;
+  let mapasDatos = null;
   let estrellas = 0;
   let ultimaVoz = '';
   let voz = null;
@@ -122,7 +123,11 @@
 
   async function cargar() {
     if (datos) return true;
-    try { datos = await (await fetch('data/scenes.json')).json(); return true; }
+    try {
+      [datos, mapasDatos] = await Promise.all(['data/scenes.json', 'data/maps.json'].map((u) => fetch(u).then((r) => r.json())));
+      MAPA.iniciar(mapasDatos, avatar);
+      return true;
+    }
     catch (e) { $('btn-empezar').textContent = 'No se pudo cargar'; return false; }
   }
 
@@ -138,7 +143,12 @@
     mostrar('avatar');
     hablar('¡Crea tu personaje! Toca las flechas.');
   });
-  $('btn-listo').addEventListener('click', () => { estrellas = 0; irA(datos.inicio); });
+  $('btn-listo').addEventListener('click', () => {
+    estrellas = 0;
+    mostrar('mapa');
+    MAPA.abrir(mapasDatos.inicio);
+    hablar('¡Toca el mapa para caminar!');
+  });
   $('btn-voz').addEventListener('click', () => hablar(ultimaVoz));
   $('btn-voz-final').addEventListener('click', () => hablar(ultimaVoz));
   $('btn-debate').addEventListener('click', () => { mostrar('debate'); hablar(preguntas.join(' ')); });

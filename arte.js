@@ -22,6 +22,20 @@
     }
   }
 
+  // Igual que capaEspejo pero sin espejar (filas completas).
+  function capa(ctx, filas, sustituir) {
+    for (const y in filas) {
+      const fila = filas[y];
+      for (let x = 0; x < fila.length; x++) {
+        let c = fila[x];
+        if (c === '.') continue;
+        if (sustituir && sustituir[c]) c = sustituir[c];
+        ctx.fillStyle = PALETA[c];
+        ctx.fillRect(x, +y, 1, 1);
+      }
+    }
+  }
+
   // ---------- La Copechi (32x32, mitad izquierda de 16 columnas) ----------
   const COP = {
     alasA: { // alas arriba
@@ -72,9 +86,11 @@
   // S = piel, H = pelo, C = color de ropa (se sustituyen al dibujar)
   const AV = {
     base: {
-      2: '..kSSSSS', 3: '.kSSSSSS', 4: '.kSSkSSS', 5: '.kpSkSSS', 6: '.kSSSSSk', 7: '..kSSSSS',
+      2: '..kSSSSS', 3: '.kSSSSSS', 4: '.kSSSSSS', 5: '.kSSSSSS', 6: '.kSSSSSS', 7: '..kSSSSS',
       8: '...kkkkk',
     },
+    cara: { 4: '....k...', 5: '..p.k...', 6: '.......k' },                     // de frente (mitad)
+    caraLado: { 4: '...k..k.........', 5: '..pk..k.........', 6: '...kk...........' }, // mirando a la izquierda (completa)
     pelo: {
       corto: { 0: '...kkkkk', 1: '..kHHHHH', 2: '.kHHHHHH', 3: '.kHHHHHH', 4: '.kH.....' },
       largo: {
@@ -109,14 +125,65 @@
     { estilo: 'vestido', color: 'y' }, { estilo: 'camiseta', color: 'p' }, { estilo: 'overol', color: 'B' },
   ];
 
-  function pintarAvatar(canvas, a) {
+  // dir: 'abajo' | 'arriba' | 'izquierda' | 'derecha'. paso: 0 quieto, 1 y 2 alternan el pie levantado al caminar.
+  function pintarAvatar(canvas, a, dir = 'abajo', paso = 0) {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, 16, 16);
     const pelo = PELO[a.pelo], ropa = ROPA[a.ropa];
     const sust = { S: PIEL[a.piel], H: pelo.color, C: ropa.color };
-    capaEspejo(ctx, 16, AV.base, sust);
+    ctx.save();
+    if (dir === 'derecha') { ctx.translate(16, 0); ctx.scale(-1, 1); }
+    capaEspejo(ctx, 16, AV.base, dir === 'arriba' ? { ...sust, S: pelo.color } : sust);
+    if (dir === 'abajo') capaEspejo(ctx, 16, AV.cara, sust);
+    else if (dir !== 'arriba') capa(ctx, AV.caraLado, sust);
     capaEspejo(ctx, 16, AV.ropa[ropa.estilo], sust);
     capaEspejo(ctx, 16, AV.pelo[pelo.estilo], sust);
+    ctx.restore();
+    if (paso === 1) ctx.clearRect(2, 15, 5, 1);
+    if (paso === 2) ctx.clearRect(9, 15, 5, 1);
+  }
+
+  // Personajes (NPC): mismas piezas del avatar.
+  const NPCS = {
+    sofi: { piel: 1, pelo: 1, ropa: 3 },
+    leo: { piel: 0, pelo: 3, ropa: 2 },
+    maestra: { piel: 2, pelo: 4, ropa: 1 },
+    amigo: { piel: 0, pelo: 0, ropa: 0 },
+  };
+
+  // ---------- Tiles del mapa (16x16, mitad izquierda de 8 columnas) ----------
+  const TILES = {
+    '.': { fondo: 'g', filas: { 10: '...G....', 11: '...G....' } },
+    f: { fondo: 'g', filas: { 6: '.....w..', 7: '....wyw.', 8: '.....w..' } },
+    '#': { fondo: 'G', filas: { 2: '.gg...g.', 5: '...gg...', 7: 'g....gg.', 10: '.gg..g..', 13: '....gg..', 15: 'kkkkkkkk' } },
+    T: {
+      fondo: 'g',
+      filas: {
+        1: '....kkkk', 2: '..kkGGGG', 3: '.kGGGGgg', 4: 'kGGgGGGG', 5: 'kGGGGGgG', 6: 'kGgGGGGG',
+        7: 'kGGGGGgg', 8: '.kGGGGGG', 9: '..kkGGGG', 10: '....kkkk', 11: '.....koo', 12: '.....koo',
+        13: '.....koo', 14: '....kkkk',
+      },
+    },
+    B: {
+      fondo: 'g',
+      filas: { 5: '.kkkkkkk', 6: '.kYYYYYY', 7: '.koooooo', 8: '.kkkkkkk', 9: '.kk.....', 10: '.kk.....' },
+    },
+    E: { fondo: 's', filas: { 0: 'YYYYYYYY', 7: '...YYYYY', 8: '...YYYYY', 15: 'YYYYYYYY' } },
+  };
+  const tilesCache = {};
+  function tile(clave) {
+    const def = TILES[clave] || TILES['.'];
+    const k = TILES[clave] ? clave : '.';
+    if (!tilesCache[k]) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 16;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = PALETA[def.fondo];
+      ctx.fillRect(0, 0, 16, 16);
+      capaEspejo(ctx, 16, def.filas);
+      tilesCache[k] = c;
+    }
+    return tilesCache[k];
   }
 
   // ---------- Estrella (16x16) ----------
@@ -188,9 +255,9 @@
   }
 
   window.ARTE = {
-    PALETA, COP, AV, ESTRELLA, FONDOS: Object.keys(FONDOS),
+    PALETA, COP, AV, ESTRELLA, TILES, NPCS, FONDOS: Object.keys(FONDOS),
     N_PIEL: PIEL.length, N_PELO: PELO.length, N_ROPA: ROPA.length,
-    pintarCopechi, pintarAvatar, pintarEstrella, pintarFondo, repintarCopechis, animar,
+    tile, pintarCopechi, pintarAvatar, pintarEstrella, pintarFondo, repintarCopechis, animar,
     get frame() { return frame; },
   };
 })();
