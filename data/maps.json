@@ -23,13 +23,27 @@
         "###########"
       ],
       "npcs": [
-        { "id": "sofi", "x": 5, "y": 4, "sprite": "sofi", "escena": "juegos" },
-        { "id": "leo", "x": 8, "y": 9, "sprite": "leo", "escena": "chat" }
+        {
+          "id": "sofi",
+          "x": 5,
+          "y": 4,
+          "sprite": "sofi",
+          "escena": "juegos"
+        }
       ],
       "exits": [
-        { "x": 5, "y": 0, "a": "salon", "spawn_x": 5, "spawn_y": 12 }
+        {
+          "x": 5,
+          "y": 0,
+          "a": "salon",
+          "spawn_x": 5,
+          "spawn_y": 12
+        }
       ],
-      "spawn": { "x": 5, "y": 11 }
+      "spawn": {
+        "x": 5,
+        "y": 11
+      }
     },
     {
       "id": "salon",
@@ -42,7 +56,7 @@
         "#.........#",
         "#.........#",
         "#.B.B.B.B.#",
-        "#.........#",
+        "#.........E",
         "#.........#",
         "#.B.B.B.B.#",
         "#.........#",
@@ -52,13 +66,84 @@
         "#####E#####"
       ],
       "npcs": [
-        { "id": "maestra", "x": 5, "y": 3, "sprite": "maestra", "escena": "frases" },
-        { "id": "amigo", "x": 7, "y": 10, "sprite": "amigo", "escena": "oficio_bombero" }
+        {
+          "id": "maestra",
+          "x": 5,
+          "y": 3,
+          "sprite": "maestra",
+          "escena": "frases"
+        },
+        {
+          "id": "amigo",
+          "x": 7,
+          "y": 10,
+          "sprite": "amigo",
+          "escena": "oficio_bombero"
+        }
       ],
       "exits": [
-        { "x": 5, "y": 13, "a": "patio", "spawn_x": 5, "spawn_y": 1 }
+        {
+          "x": 5,
+          "y": 13,
+          "a": "patio",
+          "spawn_x": 5,
+          "spawn_y": 1
+        },
+        {
+          "x": 10,
+          "y": 6,
+          "a": "cuarto",
+          "spawn_x": 1,
+          "spawn_y": 6
+        }
       ],
-      "spawn": { "x": 5, "y": 12 }
+      "spawn": {
+        "x": 5,
+        "y": 12
+      }
+    },
+    {
+      "id": "cuarto",
+      "nombre": "Cuarto",
+      "estilo": "interior",
+      "grid": [
+        "###########",
+        "#.........#",
+        "#.B.....B.#",
+        "#.........#",
+        "#.........#",
+        "#.........#",
+        "E.........#",
+        "#.........#",
+        "#.........#",
+        "#.........#",
+        "#.B.....B.#",
+        "#.........#",
+        "#.........#",
+        "###########"
+      ],
+      "npcs": [
+        {
+          "id": "leo",
+          "x": 5,
+          "y": 3,
+          "sprite": "leo",
+          "escena": "chat"
+        }
+      ],
+      "exits": [
+        {
+          "x": 0,
+          "y": 6,
+          "a": "salon",
+          "spawn_x": 9,
+          "spawn_y": 6
+        }
+      ],
+      "spawn": {
+        "x": 2,
+        "y": 6
+      }
     }
   ]
 }

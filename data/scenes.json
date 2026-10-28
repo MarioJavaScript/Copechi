@@ -135,7 +135,7 @@
         {
           "text": "Contestar dónde vivo",
           "icono": "📍",
-          "next": "mapa",
+          "next": "chat",
           "feedback": "Uy... a desconocidos no les contamos dónde vivimos. Mejor bloquea y avisa a una persona adulta de confianza. ¡Intenta otra vez!",
           "triste": true
         }

@@ -9,7 +9,8 @@ HTML, CSS y JS puros, sin dependencias. Pensado para celular en vertical (360x64
 - `data/scenes.json`: todos los textos y escenas.
 - `assets/`: recursos.
 - `guia-docente.html`: guía para docentes.
-- `arte.js`: pixel art (sprites, fondos, avatar).
+- `arte.js`: pixel art (sprites, tiles, fondos, avatar).
+- `mapa.js` y `data/maps.json`: mapas, movimiento y salidas.
 - `sw.js`: service worker para jugar sin internet tras la primera carga.
 - `check.js`: valida `scenes.json` (`node check.js`).
 - `_githooks/pre-commit`: corre `check.js` antes de cada commit.

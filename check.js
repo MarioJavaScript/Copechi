@@ -41,25 +41,88 @@ for (const id of ids) {
     if (vacio(o.text)) err(`${w}: falta "text".`);
     if (vacio(o.icono)) err(`${w}: falta "icono".`);
     if (vacio(o.feedback)) err(`${w}: falta "feedback".`);
+    if (o.triste && o.next !== id) err(`${w}: una opción triste debe volver a la misma escena (next: "${id}") para reintentar.`);
     if (vacio(o.next)) err(`${w}: falta "next".`);
     else if (o.next !== 'mapa' && !escenas[o.next]) err(`${w}: "next" apunta a una escena inexistente (${o.next}).`);
   });
 }
 
-// Mapas (validación básica de 6A; la completa llega en 6C)
-try {
+// Mapas
+{
   const SOL = '#TB';
-  for (const m of mp.mapas || []) {
-    if (m.grid.length !== 14 || m.grid.some((f) => f.length !== 11)) err(`[mapa ${m.id}] la cuadrícula debe ser de 11 columnas x 14 filas.`);
-    const en = (x, y) => (m.grid[y] || '')[x];
-    if (!en(m.spawn.x, m.spawn.y) || SOL.includes(en(m.spawn.x, m.spawn.y))) err(`[mapa ${m.id}] el spawn está en una pared o fuera del mapa.`);
-    for (const n of m.npcs) {
-      if (!en(n.x, n.y) || SOL.includes(en(n.x, n.y))) err(`[mapa ${m.id}] el NPC ${n.id} está en una pared o fuera del mapa.`);
-      if (!escenas[n.escena]) err(`[mapa ${m.id}] el NPC ${n.id} apunta a una escena inexistente (${n.escena}).`);
+  const mapas = mp.mapas || [];
+  const porId = Object.fromEntries(mapas.map((m) => [m.id, m]));
+  if (!porId[mp.inicio]) err('maps.json: "inicio" apunta a un mapa inexistente.');
+  if (new Set(mapas.map((m) => m.id)).size !== mapas.length) err('maps.json: hay ids de mapa repetidos.');
+  const en = (m, x, y) => (m.grid[y] || '')[x];
+  const dentro = (m, x, y) => en(m, x, y) !== undefined;
+  const solido = (m, x, y) => !dentro(m, x, y) || SOL.includes(en(m, x, y));
+  const npcEn = (m, x, y) => m.npcs.find((n) => n.x === x && n.y === y);
+
+  for (const m of mapas) {
+    const w = `[mapa ${m.id}]`;
+    if (m.grid.length !== 14 || m.grid.some((f) => f.length !== 11)) { err(`${w} la cuadrícula debe ser de 11 columnas x 14 filas.`); continue; }
+    if (solido(m, m.spawn.x, m.spawn.y)) err(`${w} el spawn está en una pared o fuera del mapa.`);
+    else if (en(m, m.spawn.x, m.spawn.y) === 'E') err(`${w} el spawn está sobre una salida (provocaría un bucle).`);
+
+    m.npcs.forEach((n, i) => {
+      if (solido(m, n.x, n.y)) err(`${w} el NPC ${n.id} está dentro de una pared o fuera del mapa.`);
+      else if (en(m, n.x, n.y) === 'E') err(`${w} el NPC ${n.id} está sobre una salida.`);
+      if (m.npcs.findIndex((o) => o.x === n.x && o.y === n.y) !== i) err(`${w} el NPC ${n.id} comparte tile con otro NPC.`);
+      if (!escenas[n.escena]) err(`${w} el NPC ${n.id} apunta a una escena inexistente (${n.escena}).`);
+      else if (escenas[n.escena].final) err(`${w} el NPC ${n.id} apunta a la escena final.`);
+    });
+
+    const salidas = new Set();
+    m.exits.forEach((e) => {
+      const q = `${w} salida (${e.x},${e.y})`;
+      salidas.add(e.x + ',' + e.y);
+      if (!dentro(m, e.x, e.y) || en(m, e.x, e.y) !== 'E') err(`${q}: debe estar sobre un tile E del borde (no en una pared).`);
+      const d = porId[e.a];
+      if (!d) return err(`${q}: apunta a un mapa inexistente (${e.a}).`);
+      if (solido(d, e.spawn_x, e.spawn_y)) err(`${q}: el spawn de destino está en una pared o fuera de ${e.a}.`);
+      else if (en(d, e.spawn_x, e.spawn_y) === 'E') err(`${q}: el spawn de destino está sobre una salida de ${e.a}.`);
+      else if (npcEn(d, e.spawn_x, e.spawn_y)) err(`${q}: el spawn de destino está sobre un NPC de ${e.a}.`);
+    });
+    for (let y = 0; y < 14; y++) for (let x = 0; x < 11; x++) {
+      if (en(m, x, y) === 'E' && !salidas.has(x + ',' + y)) err(`${w} el tile E (${x},${y}) no tiene salida en "exits".`);
     }
+
+    // Tiles alcanzables desde el spawn y desde cada punto de llegada
+    const entradas = [m.spawn, ...mapas.flatMap((o) => (o.exits || []).filter((e) => e.a === m.id).map((e) => ({ x: e.spawn_x, y: e.spawn_y })))];
+    const alcanzados = (ini) => {
+      const vis = new Set();
+      const cola = solido(m, ini.x, ini.y) ? [] : [[ini.x, ini.y]];
+      while (cola.length) {
+        const [x, y] = cola.pop();
+        if (vis.has(x + ',' + y) || solido(m, x, y) || npcEn(m, x, y)) continue;
+        vis.add(x + ',' + y);
+        cola.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]);
+      }
+      return vis;
+    };
+    const base = alcanzados(m.spawn);
+    for (let y = 0; y < 14; y++) for (let x = 0; x < 11; x++) {
+      if (!solido(m, x, y) && !npcEn(m, x, y) && !base.has(x + ',' + y)) err(`${w} el tile (${x},${y}) es inalcanzable desde el spawn.`);
+    }
+    entradas.forEach((e) => { if (!solido(m, e.x, e.y) && !base.has(e.x + ',' + e.y)) err(`${w} el punto de llegada (${e.x},${e.y}) queda aislado del resto del mapa.`); });
+    m.npcs.forEach((n) => {
+      const vecino = [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => base.has((n.x + dx) + ',' + (n.y + dy)));
+      if (!vecino) err(`${w} el NPC ${n.id} no tiene ningún tile libre alcanzable a su lado.`);
+    });
   }
-  if (!(mp.mapas || []).some((m) => m.id === mp.inicio)) err('maps.json: "inicio" apunta a un mapa inexistente.');
-} catch (e) { err('No se pudo leer data/maps.json: ' + e.message); }
+
+  // Todos los mapas deben poder visitarse desde el inicio
+  const vistos = new Set();
+  const cola = porId[mp.inicio] ? [mp.inicio] : [];
+  while (cola.length) {
+    const id = cola.pop();
+    if (vistos.has(id) || !porId[id]) continue;
+    vistos.add(id);
+    porId[id].exits.forEach((e) => cola.push(e.a));
+  }
+  for (const m of mapas) if (!vistos.has(m.id)) err(`[mapa ${m.id}] no se puede llegar desde "${mp.inicio}".`);
+}
 
 // Sprites: dimensiones de las matrices en arte.js (mitades de 16 u 8 columnas)
 global.window = { matchMedia: null };

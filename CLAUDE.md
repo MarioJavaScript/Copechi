@@ -28,7 +28,7 @@ Videojuego web para el Hackatón Misión Copechi (entrega 28-oct-2026, 18:30). M
 
 ## Contenido
 - `data/scenes.json` es la ÚNICA fuente de textos.
-- Escena: opcional `fondo` ("patio", "salon" o "celular"), `text`, opcional `voz` (lo que se lee en voz alta), `opciones` (máx. 2), `final: true` en las finales.
+- Escena (episodio): opcional `fondo` ("patio", "salon" o "celular"), `text`, opcional `voz` (lo que se lee en voz alta), `opciones` (máx. 2), `final: true` en las finales.
 - Opción: `text`, `icono` (emoji), `next`, `feedback`, opcional `badge`, opcional `triste: true` (opción menos buena: cara triste y `next` vuelve a la misma escena para reintentar).
 - Textos de 1 o 2 frases simples. La Copechi acompaña, nunca regaña. Nunca "fallaste": la opción menos buena da cara triste, un feedback que invita a reflexionar y la posibilidad de volver a intentar.
 - Escenas: (1) Juegos sin dueño (Sofi fútbol, Leo muñecos, "eso no es para ti"); (2) Frases que lastiman ("los niños no lloran", "las niñas no son fuertes"; elegir la frase respetuosa); (3) Quién puede ser qué (bombero, doctora, cocinero, piloto: "¡puede ser cualquiera!"); (4) Mensaje en línea (chat dice "las niñas no saben jugar" y un desconocido pregunta "¿dónde vives?"; salida correcta: bloquear y avisar a una persona adulta de confianza).
@@ -41,6 +41,15 @@ Videojuego web para el Hackatón Misión Copechi (entrega 28-oct-2026, 18:30). M
 - FASE 2: arte pixel (Copechi 3 expresiones + aleteo, fondos patio/salón/celular con chat, avatar con ◀ ▶ sin restricción por género, estrellas).
 - FASE 3: contenido de las 4 escenas en scenes.json.
 - FASE 4: pulido: guia-docente.html (objetivo, 15 min, uso, 3 preguntas), funciona offline tras cargar, contraste y letra, README con GitHub Pages y QR. Verificar en 360x640 y 768x1024.
+
+## Arquitectura de mapas (Fase 6)
+- Flujo: "Toca para empezar" → avatar → mapa. El jugador camina por 3 mapas vistos desde arriba, habla con NPC y cada NPC abre una escena de `scenes.json` como diálogo encima del mapa. Al terminar la escena (opción con `"next": "mapa"`) se vuelve al mapa y se marca completada (estrella llena en la barra). Con las 4 escenas completadas se muestra la pantalla final (estrellas, mensaje central, "Para platicar").
+- Mapas: patio (escena `juegos`, NPC Sofi), salón (`frases` con la maestra y `oficio_bombero`→…→`oficio_piloto` con el amigo) y cuarto con celular (`chat`, NPC Leo). Conexiones: patio ↔ salón (borde de arriba/abajo), salón ↔ cuarto (borde derecho/izquierdo).
+- `data/maps.json`: `inicio`, `final` (id de la escena final) y `mapas[]`. Cada mapa: `id`, `nombre`, `estilo` ("exterior" o "interior"), `grid` (14 strings de 11 caracteres: `#` pared, `.` suelo, `T` árbol, `B` banca/pupitre, `E` salida en el borde), `npcs` (`id`, `x`, `y`, `sprite`, `escena`), `exits` (`x`, `y`, `a`, `spawn_x`, `spawn_y`) y `spawn`. Un tile `E` sin entrada en `exits` es error. Spawn y llegadas nunca sobre `E` ni NPC.
+- Tiles 16x16 escalados x2 (32 px), una sola pantalla sin scroll (el canvas baja de escala si la pantalla es más baja). Tiles y NPC salen de matrices en `arte.js` (`TILES`, `TILES_INT`, `NPCS`).
+- `mapa.js` (motor): BFS esquivando paredes y NPC, caminata de 2 frames con orientación, flecha amarilla hacia el siguiente NPC pendiente (o la salida que lleva a él), fundido de 300 ms al cambiar de mapa. `game.js` conecta mapa y escenas (`hablarConNpc`, `cerrarEpisodio`).
+- Controles: tocar un tile (camina), tocar un NPC (camina a su lado y habla) y 4 flechas de 64 px (se mantienen presionadas; el botón 🎮 las oculta). Solo pointer events.
+- Escenas: una opción `triste: true` debe tener `next` igual a su propia escena (reintentar). `next: "mapa"` termina el episodio.
 
 ## Offline
 - `sw.js` guarda los archivos (cache-first). Al cambiar archivos, subir la versión de `CACHE` en sw.js.
