@@ -49,6 +49,7 @@ Videojuego web para el Hackatón Misión Copechi (entrega 28-oct-2026, 18:30). M
 - Tiles 16x16 escalados x2 (32 px), una sola pantalla sin scroll (el canvas baja de escala si la pantalla es más baja). Tiles y NPC salen de matrices en `arte.js` (`TILES`, `TILES_INT`, `NPCS`).
 - `mapa.js` (motor): BFS esquivando paredes y NPC, caminata de 2 frames con orientación, flecha amarilla hacia el siguiente NPC pendiente (o la salida que lleva a él), fundido de 300 ms al cambiar de mapa. `game.js` conecta mapa y escenas (`hablarConNpc`, `cerrarEpisodio`).
 - Controles: tocar un tile (camina), tocar un NPC (camina a su lado y habla) y 4 flechas de 64 px (se mantienen presionadas; el botón 🎮 las oculta). Solo pointer events.
+- Diálogos: la escena se muestra en `#juego`, una capa semitransparente encima del mapa. Caja RPG con retrato 32x32 (NPC o La Copechi) y etiqueta con el nombre (`nombre` del NPC en maps.json). El texto se pagina automáticamente en páginas de máximo 2 líneas (tocar la caja avanza; la voz lee el texto completo). Las opciones (botones amarillo/verde, 72 px) aparecen en la última página con ícono pixel de `ARTE.pintarIcono` (mapeado desde el emoji de `icono`; sin emojis en pantalla). El feedback muestra a La Copechi grande con su cara y chispas de 2 cuadros si fue buena respuesta, más un botón coral "Seguir" / "Intentar otra vez".
 - Escenas: una opción `triste: true` debe tener `next` igual a su propia escena (reintentar). `next: "mapa"` termina el episodio.
 
 ## Offline

@@ -139,7 +139,8 @@ try {
   };
   [['alasA', A.COP.alasA], ['alasB', A.COP.alasB], ['cuerpo', A.COP.cuerpo], ...Object.entries(A.COP.cara).map(([k, v]) => ['cara.' + k, v])]
     .forEach(([n, f]) => mitad('Copechi ' + n, f, 16, 32));
-  mitad('avatar cara', A.AV.cara, 8, 16); mitad('avatar caraLado', A.AV.caraLado, 16, 16);
+  for (const [e, f] of Object.entries(A.AV.cara)) mitad('avatar cara ' + e, f, 8, 16);
+  for (const [n, f] of Object.entries(A.ICONOS_MATRIZ)) mitad('icono ' + n, f, 8, 16); mitad('avatar caraLado', A.AV.caraLado, 16, 16);
   for (const [t, d] of [...Object.entries(A.TILES), ...Object.entries(A.TILES_INT).map(([t, d]) => ['int ' + t, d])]) mitad('tile ' + t, d.filas, 8, 16);
   A.CHISPA.forEach((f, i) => mitad('chispa ' + i, f, 7, 7)); A.FLOR.forEach((f, i) => mitad('flor ' + i, f, 7, 9));
   for (const [l, f] of Object.entries(A.FUENTE)) { if (f.length !== 7 || f.some((r) => r.length !== 5)) err('arte.js: la letra ' + l + ' debe medir 5x7.'); }

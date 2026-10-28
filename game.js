@@ -14,7 +14,8 @@
   let voz = null;
   let preguntas = [];
 
-  const mostrar = (nombre) => pantallas.forEach((p) => $(p).classList.toggle('activa', p === nombre));
+  // El diálogo ('juego') se muestra encima del mapa, que sigue visible detrás.
+  const mostrar = (nombre) => { document.body.classList.toggle('en-dialogo', nombre === 'juego'); pantallas.forEach((p) => $(p).classList.toggle('activa', p === nombre || (nombre === 'juego' && p === 'mapa'))); };
   const vibrar = (ms) => { if (navigator.vibrate) navigator.vibrate(ms); };
   const expresion = (canvas, e) => { canvas.dataset.expr = e; ARTE.pintarCopechi(canvas, e, ARTE.frame); };
 
@@ -82,7 +83,7 @@
 
   // ---- Avatar ----
   function pintarAvatares() {
-    ['avatar-grande', 'avatar-mini', 'avatar-final'].forEach((id) => ARTE.pintarAvatar($(id), avatar));
+    ['avatar-grande', 'avatar-final'].forEach((id) => ARTE.pintarAvatar($(id), avatar));
   }
   document.querySelectorAll('.flecha').forEach((b) => b.addEventListener('click', () => {
     const c = b.dataset.campo;
@@ -91,65 +92,96 @@
     pintarAvatares();
   }));
 
-  // ---- Escenas ----
+  // ---- Diálogos RPG (encima del mapa) ----
+  let npcActual = null;      // NPC que habla en la escena (null: La Copechi)
+
+  // Parte el texto en páginas de máximo 2 líneas: por frases y, si una no cabe, por palabras.
+  function paginar(texto, el) {
+    const cabe = (t) => { el.textContent = t; return el.scrollHeight <= el.clientHeight + 1; };
+    const frases = (texto.match(/[^.!?]+[.!?»”]*/g) || [texto]).map((f) => f.trim()).filter(Boolean);
+    const paginas = [];
+    let cur = '';
+    frases.forEach((f) => {
+      const junto = cur ? cur + ' ' + f : f;
+      if (cabe(junto)) { cur = junto; return; }
+      if (cur) { paginas.push(cur); cur = ''; }
+      if (cabe(f)) { cur = f; return; }
+      f.split(' ').forEach((w) => {
+        const c = cur ? cur + ' ' + w : w;
+        if (cabe(c) || !cur) cur = c; else { paginas.push(cur); cur = w; }
+      });
+    });
+    if (cur) paginas.push(cur);
+    return paginas;
+  }
+
+  // Muestra un texto por páginas dentro de una caja; tocar la caja avanza. `alCambiar(ultima)` avisa si es la última.
+  function cajaTexto(caja, el, mas, alCambiar) {
+    let paginas = [], i = 0;
+    const ver = () => {
+      el.textContent = paginas[i] || '';
+      mas.hidden = i >= paginas.length - 1;
+      alCambiar(i >= paginas.length - 1);
+    };
+    caja.addEventListener('click', () => { if (i < paginas.length - 1) { i++; ver(); vibrar(10); } });
+    return { poner(texto) { paginas = paginar(texto, el); i = 0; ver(); } };
+  }
+  const textoEscena = cajaTexto($('dlg-caja'), $('texto'), $('dlg-mas'), (ultima) => $('opciones').classList.toggle('oculta', !ultima));
+  const textoFeedback = cajaTexto($('fb-caja'), $('fb-texto'), $('fb-mas'), () => {});
+
   function irA(id) {
     const esc = datos.escenas[id];
     if (esc.final) return pantallaFinal(esc);
-    expresion($('copechi'), 'neutral');
-    ARTE.pintarFondo($('fondo'), esc.fondo);
-    $('texto').textContent = esc.text;
+    mostrar('juego');
+    $('panel-fb').hidden = true;
+    $('panel-escena').hidden = false;
+    ARTE.pintarRetrato($('retrato'), npcActual ? npcActual.sprite : 'copechi', 'neutral');
+    $('dlg-nombre').textContent = npcActual ? npcActual.nombre : 'La Copechi';
     const cont = $('opciones');
     cont.replaceChildren();
-    esc.opciones.forEach((op) => {
+    esc.opciones.forEach((op, i) => {
       const b = document.createElement('button');
-      b.className = 'btn opcion';
-      const ic = document.createElement('span');
-      ic.className = 'icono';
-      ic.textContent = op.icono;
+      b.className = 'btn-rpg c' + i;
+      const ic = document.createElement('canvas');
+      ic.className = 'ico';
+      ARTE.pintarIcono(ic, op.icono);
       const tx = document.createElement('span');
       tx.textContent = op.text;
       b.append(ic, tx);
       b.addEventListener('click', () => elegir(op));
       cont.append(b);
     });
-    mostrar('juego');
+    textoEscena.poner(esc.text);
     hablar(esc.voz || esc.text);
   }
 
+  const CHISPAS_FB = [[8, 12], [84, 8], [2, 52], [92, 48], [20, 80], [74, 78]];
   function elegir(op) {
     vibrar(30);
     if (op.badge && !op.triste) estrellas++;
     const expr = op.triste ? 'triste' : 'contenta';
-    const fb = document.createElement('div');
-    fb.className = 'feedback';
-    const cop = document.createElement('canvas');
-    cop.className = 'copechi grande';
-    cop.width = cop.height = 32;
-    expresion(cop, expr);
-    const ic = document.createElement('div');
-    ic.style.fontSize = '48px';
-    ic.textContent = op.icono;
-    const tx = document.createElement('p');
-    tx.className = 'tarjeta';
-    tx.textContent = op.feedback;
-    const bv = document.createElement('button');
-    bv.className = 'btn bocina';
-    bv.textContent = '🔊';
-    bv.setAttribute('aria-label', 'Escuchar otra vez');
-    bv.addEventListener('click', () => hablar(op.feedback));
-    const sig = document.createElement('button');
-    sig.className = 'btn grande';
-    sig.textContent = op.triste ? '🔁 Intentar otra vez' : '➡️ Seguir';
-    sig.addEventListener('click', () => { fb.remove(); if (op.next === 'mapa') cerrarEpisodio(); else irA(op.next); });
-    fb.append(cop, ic, tx, bv, sig);
-    $('juego').append(fb);
-    expresion($('copechi'), expr);
+    $('panel-escena').hidden = true;
+    $('panel-fb').hidden = false;
+    expresion($('fb-copechi'), expr);
+    $('fb-chispas').replaceChildren(...(op.triste ? [] : CHISPAS_FB.map(([x, y], i) => {
+      const caja = document.createElement('div');
+      caja.className = 'chispa pop';
+      Object.assign(caja.style, { left: x + '%', top: y + '%', width: '28px', height: '28px', animationDelay: i * 0.15 + 's' });
+      ARTE.CHISPA.forEach((f) => { const c = document.createElement('canvas'); ARTE.pintarMini(c, f, null); c.style.animationDelay = (-i * 0.3) + 's'; caja.append(c); });
+      return caja;
+    })));
+    const btn = $('btn-seguir');
+    ARTE.pintarIcono(btn.querySelector('canvas'), op.triste ? 'repetir' : 'seguir');
+    btn.querySelector('span').textContent = op.triste ? 'Intentar otra vez' : 'Seguir';
+    btn.onclick = () => { if (op.next === 'mapa') cerrarEpisodio(); else irA(op.next); };
+    textoFeedback.poner(op.feedback);
     hablar(op.feedback);
   }
 
   // Abre la escena de un NPC encima del mapa.
   function hablarConNpc(npc) {
     MAPA.pausar();
+    npcActual = npc;
     episodio = npc.escena;
     irA(npc.escena);
   }
@@ -158,6 +190,7 @@
   function cerrarEpisodio() {
     completadas.add(episodio);
     episodio = null;
+    npcActual = null;
     const todas = mapasDatos.mapas.flatMap((m) => m.npcs.map((n) => n.escena));
     if (todas.every((id) => completadas.has(id))) return pantallaFinal(datos.escenas[mapasDatos.final]);
     mostrar('mapa');
@@ -215,6 +248,7 @@
   $('btn-voz-debate').addEventListener('click', () => hablar(ultimaVoz));
   $('btn-reiniciar').addEventListener('click', () => { mostrar('avatar'); hablar('¡Crea tu personaje! Toca las flechas.'); });
 
+  ['ico-bocina', 'ico-bocina-final', 'ico-bocina-debate'].forEach((id) => ARTE.pintarIcono($(id), 'bocina'));
   ARTE.animar();
 })();
 

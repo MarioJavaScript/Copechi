@@ -45,14 +45,36 @@
   </section>
 
   <section id="juego" class="pantalla">
-    <div class="escena">
-      <canvas id="fondo" width="72" height="40" aria-hidden="true"></canvas>
-      <canvas id="copechi" class="copechi" width="32" height="32" data-expr="neutral" aria-hidden="true"></canvas>
-      <canvas id="avatar-mini" class="avatar-mini" width="16" height="16" aria-hidden="true"></canvas>
-      <button id="btn-voz" class="btn bocina" aria-label="Escuchar otra vez">🔊</button>
+    <button id="btn-voz" class="btn bocina-btn" aria-label="Escuchar otra vez"><canvas id="ico-bocina" class="ico"></canvas></button>
+
+    <div id="panel-escena" class="panel">
+      <div class="dlg">
+        <div class="dlg-cabeza">
+          <div class="marco-retrato"><canvas id="retrato" class="retrato" width="32" height="32" aria-hidden="true"></canvas></div>
+          <span id="dlg-nombre" class="etiqueta"></span>
+        </div>
+        <div id="dlg-caja" class="caja-rpg" role="button" tabindex="0" aria-label="Siguiente">
+          <p id="texto" class="dlg-texto"></p>
+          <span id="dlg-mas" class="mas" aria-hidden="true">▼</span>
+        </div>
+      </div>
+      <div id="opciones" class="opciones-rpg"></div>
     </div>
-    <p id="texto" class="tarjeta"></p>
-    <div id="opciones" class="opciones"></div>
+
+    <div id="panel-fb" class="panel" hidden>
+      <div class="fb-copechi">
+        <canvas id="fb-copechi" class="copechi" width="32" height="32" data-expr="contenta" aria-hidden="true"></canvas>
+        <div id="fb-chispas" class="fb-chispas" aria-hidden="true"></div>
+      </div>
+      <div class="dlg">
+        <div class="dlg-cabeza"><span class="etiqueta">La Copechi</span></div>
+        <div id="fb-caja" class="caja-rpg" role="button" tabindex="0" aria-label="Siguiente">
+          <p id="fb-texto" class="dlg-texto"></p>
+          <span id="fb-mas" class="mas" aria-hidden="true">▼</span>
+        </div>
+      </div>
+      <button id="btn-seguir" class="btn-rpg c2 grande"><canvas class="ico"></canvas><span></span></button>
+    </div>
   </section>
 
   <section id="final" class="pantalla">
@@ -62,14 +84,14 @@
     </div>
     <div id="estrellas" class="estrellas" aria-hidden="true"></div>
     <p id="texto-final" class="tarjeta"></p>
-    <button id="btn-voz-final" class="btn bocina" aria-label="Escuchar otra vez">🔊</button>
+    <button id="btn-voz-final" class="btn bocina-btn alta" aria-label="Escuchar otra vez"><canvas id="ico-bocina-final" class="ico"></canvas></button>
     <button id="btn-debate" class="btn grande">💬 Para platicar</button>
   </section>
 
   <section id="debate" class="pantalla">
     <h2>💬 Para platicar en el salón</h2>
     <ol id="preguntas" class="preguntas"></ol>
-    <button id="btn-voz-debate" class="btn bocina" aria-label="Escuchar otra vez">🔊</button>
+    <button id="btn-voz-debate" class="btn bocina-btn alta" aria-label="Escuchar otra vez"><canvas id="ico-bocina-debate" class="ico"></canvas></button>
     <button id="btn-reiniciar" class="btn grande">🔁 Jugar otra vez</button>
   </section>
   <div id="fundido" class="fundido" aria-hidden="true"></div>

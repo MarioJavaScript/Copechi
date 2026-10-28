@@ -68,8 +68,8 @@
         14: '...........k....', 15: '............kkkk',
       },
       triste: {
-        9: '...........kk...', 10: '.........wwww...', 11: '.........wkkw...', 12: '.........wkkw...',
-        13: '.........wwww...', 14: '.........B..kkkk', 15: '...........k....',
+        8: '...........kk...', 9: '.........kk.....', 10: '.........wwww...', 11: '.........wwww...',
+        12: '.........wkkw...', 13: '.........wkkw...', 14: '.........BB..kkk', 15: '............k...',
       },
     },
   };
@@ -89,7 +89,11 @@
       2: '..kSSSSS', 3: '.kSSSSSS', 4: '.kSSSSSS', 5: '.kSSSSSS', 6: '.kSSSSSS', 7: '..kSSSSS',
       8: '...kkkkk',
     },
-    cara: { 4: '....k...', 5: '..p.k...', 6: '.......k' },                     // de frente (mitad)
+    cara: { // de frente (mitad), por expresión
+      neutral: { 4: '....k...', 5: '..p.k...', 6: '.......k' },
+      contenta: { 4: '....k...', 5: '..p.k...', 6: '.....k..', 7: '......kk' },
+      triste: { 4: '....k...', 5: '....k...', 6: '...b..kk', 7: '.....k..' },
+    },
     caraLado: { 4: '...k..k.........', 5: '..pk..k.........', 6: '...kk...........' }, // mirando a la izquierda (completa)
     pelo: {
       corto: { 0: '...kkkkk', 1: '..kHHHHH', 2: '.kHHHHHH', 3: '.kHHHHHH', 4: '.kH.....' },
@@ -126,7 +130,7 @@
   ];
 
   // dir: 'abajo' | 'arriba' | 'izquierda' | 'derecha'. paso: 0 quieto, 1 y 2 alternan el pie levantado al caminar.
-  function pintarAvatar(canvas, a, dir = 'abajo', paso = 0) {
+  function pintarAvatar(canvas, a, dir = 'abajo', paso = 0, expr = 'neutral') {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, 16, 16);
     const pelo = PELO[a.pelo], ropa = ROPA[a.ropa];
@@ -134,7 +138,7 @@
     ctx.save();
     if (dir === 'derecha') { ctx.translate(16, 0); ctx.scale(-1, 1); }
     capaEspejo(ctx, 16, AV.base, dir === 'arriba' ? { ...sust, S: pelo.color } : sust);
-    if (dir === 'abajo') capaEspejo(ctx, 16, AV.cara, sust);
+    if (dir === 'abajo') capaEspejo(ctx, 16, AV.cara[expr] || AV.cara.neutral, sust);
     else if (dir !== 'arriba') capa(ctx, AV.caraLado, sust);
     capaEspejo(ctx, 16, AV.ropa[ropa.estilo], sust);
     capaEspejo(ctx, 16, AV.pelo[pelo.estilo], sust);
@@ -379,6 +383,100 @@
     capa(ctx, Object.assign({}, filas), sust);
   }
 
+  // ---------- Retratos (32x32) e íconos (16x16) de los diálogos ----------
+  // quien: 'copechi' o el nombre de un NPC (ver NPCS). expr: neutral | contenta | triste.
+  function pintarRetrato(canvas, quien, expr) {
+    canvas.width = canvas.height = 32;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = PALETA.b;
+    ctx.fillRect(0, 0, 32, 32);
+    ctx.fillStyle = PALETA.w; // nubecita de fondo
+    ctx.fillRect(3, 4, 6, 2); ctx.fillRect(5, 3, 3, 1);
+    const tmp = document.createElement('canvas');
+    tmp.width = tmp.height = quien === 'copechi' ? 32 : 16;
+    if (quien === 'copechi') {
+      pintarCopechi(tmp, expr, 0);
+      ctx.drawImage(tmp, 0, 0);
+    } else {
+      pintarAvatar(tmp, NPCS[quien], 'abajo', 0, expr);
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(tmp, 0, 0, 16, 12, 0, 8, 32, 24); // cabeza y hombros al doble
+    }
+  }
+
+  const disco = (ctx, cx, cy, r, c) => {
+    ctx.fillStyle = PALETA[c];
+    for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) if ((x + 0.5 - cx) ** 2 + (y + 0.5 - cy) ** 2 <= r * r) ctx.fillRect(x, y, 1, 1);
+  };
+  const pt = (ctx, c, x, y, w = 1, h = 1) => { ctx.fillStyle = PALETA[c]; ctx.fillRect(x, y, w, h); };
+  const cabezaAv = (ctx, quien) => { // cabeza de un personaje como ícono
+    const t = document.createElement('canvas');
+    t.width = t.height = 16;
+    pintarAvatar(t, NPCS[quien], 'abajo', 0, 'contenta');
+    ctx.drawImage(t, 0, 0, 16, 10, 0, 3, 16, 10);
+  };
+  const ICONOS_MATRIZ = { // mitades de 8 columnas
+    corazon: {
+      2: '..kkk...', 3: '.kyyyk..', 4: 'kyywyyk.', 5: 'kyyyyyyy', 6: 'kyyyyyyy', 7: '.kyyyyyy',
+      8: '..kyyyyy', 9: '...kyyyy', 10: '....kyyy', 11: '.....kyy', 12: '......ky', 13: '.......k',
+    },
+    escudo: {
+      1: 'kkkkkkkk', 2: 'kbbbBBBB', 3: 'kbbbBBBB', 4: 'kbbbBBBB', 5: 'kbbbBBBB', 6: 'kbbbBBBB', 7: '.kbbBBBB',
+      8: '.kbbBBBB', 9: '..kbBBBB', 10: '...kBBBB', 11: '....kBBB', 12: '.....kBB', 13: '......kk',
+    },
+    pin: {
+      1: '...kkkkk', 2: '..krrrrr', 3: '.krrwwrr', 4: '.krrwrrr', 5: '.krrrrrr', 6: '..krrrrr', 7: '...krrrr',
+      8: '....krrr', 9: '.....krr', 10: '......kr', 11: '.......k',
+    },
+  };
+  const ICONOS = {
+    '⚽': (ctx) => {
+      disco(ctx, 8, 8, 7.5, 'k'); disco(ctx, 8, 8, 6.5, 'w');
+      pt(ctx, 'k', 7, 6, 2, 4); pt(ctx, 'k', 6, 7, 4, 2);
+      [[3, 3], [12, 3], [3, 12], [12, 12]].forEach(([x, y]) => pt(ctx, 'k', x, y, 1, 1));
+      [[4, 4], [11, 4], [4, 11], [11, 11]].forEach(([x, y]) => pt(ctx, 'k', x, y, 1, 1));
+      pt(ctx, 'k', 5, 5); pt(ctx, 'k', 10, 5); pt(ctx, 'k', 5, 10); pt(ctx, 'k', 10, 10);
+    },
+    '🚫': (ctx) => {
+      disco(ctx, 8, 8, 7.5, 'k'); disco(ctx, 8, 8, 6.5, 'r'); disco(ctx, 8, 8, 4.3, 'w');
+      for (let i = 0; i < 9; i++) { pt(ctx, 'r', 4 + i, 4 + i, 2, 1); pt(ctx, 'r', 4 + i, 5 + i, 1, 1); }
+    },
+    '💛': (ctx) => capaEspejo(ctx, 16, ICONOS_MATRIZ.corazon),
+    '🤐': (ctx) => {
+      disco(ctx, 8, 8, 7.5, 'k'); disco(ctx, 8, 8, 6.5, 'y');
+      pt(ctx, 'k', 4, 5, 2, 2); pt(ctx, 'k', 10, 5, 2, 2);
+      pt(ctx, 'k', 4, 10, 8, 1);
+      [5, 7, 9].forEach((x) => pt(ctx, 'k', x, 9, 1, 3));
+    },
+    '👧': (ctx) => cabezaAv(ctx, 'sofi'),
+    '👦': (ctx) => cabezaAv(ctx, 'leo'),
+    '🛡': (ctx) => capaEspejo(ctx, 16, ICONOS_MATRIZ.escudo),
+    '📍': (ctx) => capaEspejo(ctx, 16, ICONOS_MATRIZ.pin),
+    bocina: (ctx) => {
+      pt(ctx, 'k', 2, 5, 4, 6); pt(ctx, 'y', 3, 6, 2, 4);
+      for (let i = 0; i < 4; i++) { pt(ctx, 'k', 6 + i, 4 - i, 1, 8 + 2 * i); pt(ctx, 'y', 6 + i, 5 - i, 1, 6 + 2 * i); }
+      pt(ctx, 'k', 12, 6, 1, 4); pt(ctx, 'k', 14, 4, 1, 8); pt(ctx, 'k', 13, 5, 1, 1); pt(ctx, 'k', 13, 10, 1, 1);
+    },
+    seguir: (ctx) => {
+      pt(ctx, 'k', 2, 6, 7, 4);
+      for (let i = 0; i < 5; i++) pt(ctx, 'k', 8 + i, 3 + i, 1, 10 - 2 * i);
+    },
+    repetir: (ctx) => {
+      for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) {
+        const d = Math.hypot(x + 0.5 - 8, y + 0.5 - 8), a = Math.atan2(y + 0.5 - 8, x + 0.5 - 8);
+        if (d >= 3.8 && d <= 6 && !(a > -1.4 && a < -0.2)) pt(ctx, 'k', x, y);
+      }
+      pt(ctx, 'k', 11, 1, 1, 5); pt(ctx, 'k', 12, 2, 1, 3); pt(ctx, 'k', 13, 3, 1, 1); pt(ctx, 'k', 10, 1, 1, 1);
+    },
+    estrella: (ctx) => capaEspejo(ctx, 16, ESTRELLA),
+  };
+  function pintarIcono(canvas, nombre) {
+    canvas.width = canvas.height = 16;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 16, 16);
+    (ICONOS[String(nombre).replace(/\uFE0F/g, '')] || ICONOS.estrella)(ctx);
+  }
+
   // ---------- Aleteo de 2 cuadros ----------
   let frame = 0;
   function repintarCopechis() {
@@ -391,9 +489,9 @@
   }
 
   window.ARTE = {
-    PALETA, COP, AV, ESTRELLA, TILES, TILES_INT, NPCS, FONDOS: Object.keys(FONDOS),
+    PALETA, COP, AV, ESTRELLA, TILES, TILES_INT, NPCS, ICONOS_MATRIZ, FONDOS: Object.keys(FONDOS),
     N_PIEL: PIEL.length, N_PELO: PELO.length, N_ROPA: ROPA.length,
-    tile, pintarTitulo, pintarInicio, pintarNube, pintarMini, CHISPA, FLOR, FUENTE, pintarCopechi, pintarAvatar, pintarEstrella, pintarFondo, repintarCopechis, animar,
+    tile, pintarRetrato, pintarIcono, pintarTitulo, pintarInicio, pintarNube, pintarMini, CHISPA, FLOR, FUENTE, pintarCopechi, pintarAvatar, pintarEstrella, pintarFondo, repintarCopechis, animar,
     get frame() { return frame; },
   };
 })();
